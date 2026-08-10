@@ -1,0 +1,3 @@
+-- LoanTrack NG development seed data will be added after the core schema.
+-- Seed records must be synthetic, clearly labelled as demonstration data,
+-- and must never contain production borrower information or credentials.
