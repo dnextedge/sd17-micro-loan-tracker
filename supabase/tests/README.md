@@ -1,3 +1,15 @@
 # Database tests
 
-Phase 2 will add SQL/RLS tests covering anonymous, borrower, cross-borrower, and administrator access as well as financial constraints and allowed status transitions.
+Run these pgTAP suites after starting the local Supabase stack:
+
+```bash
+npm run db:reset
+npm run db:test
+```
+
+- `000_schema.test.sql` covers the schema, integer-money constraints, lifecycle
+  transitions, overdue derivation, immutable repayments, and borrower consistency.
+- `010_rls.test.sql` exercises borrower ownership boundaries and administrator
+  visibility using authenticated JWT claims.
+
+All fixtures are synthetic and every suite runs inside a rolled-back transaction.

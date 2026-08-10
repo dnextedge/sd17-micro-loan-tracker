@@ -6,13 +6,18 @@ Supabase Auth supplies user identity and persistent sessions. Roles live in a pr
 
 ## RLS strategy
 
-- Enable RLS on every public application table.
+- RLS is enabled on every public application table.
 - Anonymous users receive no application-record access.
 - Borrowers access only records connected to their own profile.
-- Borrowers receive read-only access to loans, schedules, repayments, and history.
+- Borrowers receive read-only access to their loans, schedules, repayments, and history.
+- Borrowers can create only their own draft applications; column grants exclude administrator notes and review timestamps.
 - Sensitive updates are unavailable as broad table grants and instead use restricted functions.
 - Administrators are identified by a database-verified helper with fixed `search_path` and minimal grants.
-- Cross-borrower and borrower-to-admin denial is tested with real JWT contexts.
+- Cross-borrower and borrower-to-admin denial is covered by pgTAP suites using authenticated JWT claims.
+
+The `private` helper schema is not exposed through the Data API. Security-definer
+helpers use an empty `search_path`, role assignment cannot be changed through
+authenticated table grants, and signup metadata is never trusted for roles.
 
 ## Secrets
 

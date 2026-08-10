@@ -6,7 +6,7 @@ Money is stored as PostgreSQL `BIGINT` minor units (kobo). For example, ₦120,0
 
 Interest rates use an exact PostgreSQL `NUMERIC` value. Schedule generation rounds deterministically and assigns any remainder to the final installment so installments sum exactly to total repayable.
 
-## Planned tables
+## Core tables
 
 | Table                 | Responsibility                                            |
 | --------------------- | --------------------------------------------------------- |
@@ -20,11 +20,32 @@ Interest rates use an exact PostgreSQL `NUMERIC` value. Schedule generation roun
 | `notifications`       | In-app user notices                                       |
 | `audit_logs`          | Important mutation audit metadata                         |
 
-UUID primary keys, `timestamptz`, foreign keys, checks, unique human-readable numbers, and query-specific indexes will be used consistently.
+UUID primary keys, `timestamptz`, foreign keys, checks, unique human-readable
+numbers, and query-specific indexes are defined in
+`supabase/migrations/20260810160000_initial_schema.sql`.
+
+Application and loan states use PostgreSQL enums and allow-listed transition
+functions. A composite foreign key prevents a loan from being attached to an
+application belonging to another borrower. The
+`repayment_schedule_effective` security-invoker view derives overdue status
+when an unpaid installment is past its due date.
 
 ## Transaction rules
 
-Application transitions, approval, disbursement, schedule generation, repayment allocation, and loan completion will use allow-listed PostgreSQL functions. Repayment allocation locks the loan, inserts a transaction, allocates the oldest outstanding installments, recalculates aggregates, and records history in one transaction.
+Application and loan transitions are allow-listed in PostgreSQL. Repayment
+rows, lifecycle history, and audit rows are append-only. Approval,
+disbursement, schedule generation, and repayment allocation functions will be
+added with their application workflows; allocation will lock the loan, insert
+a transaction, allocate oldest outstanding installments, recalculate
+aggregates, and record history in one transaction.
+
+## Demonstration data
+
+`supabase/seed.sql` contains synthetic, clearly labelled local demonstration
+records for Emem James and an administrator. The sample loan stores ₦120,000 as
+`12000000` kobo, ₦40,000 repaid as `4000000`, and ₦80,000 outstanding as
+`8000000`. It contains six ₦20,000 installments and two immutable repayment
+transactions.
 
 ## Migration workflow
 
