@@ -73,15 +73,8 @@ jobs:
       - name: Run pgTAP database tests
         run: npm run db:test
 
-      - name: Generate TypeScript database types
+      - name: Verify generated TypeScript database types
         run: |
-          mkdir -p generated
-          npx supabase gen types typescript --local --schema public > generated/database.types.ts
-
-      - name: Upload generated database types
-        uses: actions/upload-artifact@v4
-        with:
-          name: database-types
-          path: generated/database.types.ts
-          if-no-files-found: error
-          retention-days: 7
+          npx supabase gen types typescript --local --schema public > /tmp/database.types.ts
+          npx prettier --write /tmp/database.types.ts
+          diff --unified src/types/database.types.ts /tmp/database.types.ts

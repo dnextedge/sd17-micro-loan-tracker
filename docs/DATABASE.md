@@ -53,5 +53,8 @@ transactions.
 2. Review SQL, permissions, RLS, and rollback implications.
 3. Run `npm run db:reset` against local Supabase.
 4. Run database and application tests.
-5. Regenerate TypeScript database types.
+5. Regenerate `src/types/database.types.ts` with the Supabase CLI.
 6. Commit migration and generated types together.
+
+CI regenerates the public-schema types after replaying migrations and fails if
+the committed file has drifted from PostgreSQL.
