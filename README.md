@@ -4,9 +4,10 @@ Digital Micro-Loan Request & Repayment Tracking.
 
 LoanTrack NG is a 3MTT capstone project that will replace paper forms, notebooks, and disconnected spreadsheets with a focused workflow for requesting, reviewing, disbursing, and tracking micro-loans. It is a tracking and management system, not a licensed lender.
 
-> Development status: Phases 1 and 2 complete. The schema, RLS, synthetic seed,
-> pgTAP suites, database lint, and generated TypeScript types pass against a
-> clean Supabase stack in CI. Application workflows are not implemented yet.
+> Development status: Phases 1 and 2 complete; Phase 3 authentication and
+> borrower-profile implementation is in progress. Automated checks and the
+> production build pass, but hosted Supabase credentials and end-to-end Auth
+> QA are still pending.
 
 ## 3MTT Project Information
 

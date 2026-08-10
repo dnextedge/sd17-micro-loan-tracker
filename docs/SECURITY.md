@@ -4,6 +4,13 @@
 
 Supabase Auth supplies user identity and persistent sessions. Roles live in a protected `user_roles` table and are never trusted from client-controlled metadata. UI navigation is role-aware, but server/database authorization is mandatory.
 
+The Next.js integration uses request-scoped Supabase SSR clients, HTTP-only
+session cookies managed through `src/proxy.ts`, verified `getUser()` calls in
+server code, and database role lookup for administrator routes. Authentication
+callbacks accept only validated internal redirect paths. Password-reset
+requests return the same response whether or not an email exists to reduce
+account enumeration.
+
 ## RLS strategy
 
 - RLS is enabled on every public application table.

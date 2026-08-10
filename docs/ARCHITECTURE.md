@@ -30,7 +30,10 @@ LoanTrack NG records
 - Route Handlers are reserved for auth callbacks and genuine HTTP integrations.
 - Node.js is the default runtime.
 - Production builds use Next.js's supported webpack builder because Turbopack's CSS worker cannot bind its internal port in the managed Codex environment. Development can continue to use the default Next.js dev bundler.
-- `proxy.ts` will refresh authentication cookies and provide early route redirects; it will not replace database authorization.
+- `src/proxy.ts` refreshes Supabase authentication cookies and redirects
+  unauthenticated protected-route requests. Server layouts verify the user
+  again, administrator pages query the protected `user_roles` table, and RLS
+  remains the final authorization boundary.
 
 ## Trust boundaries
 

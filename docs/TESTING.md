@@ -21,6 +21,8 @@ npm run build
 - Negative/zero/overpayment rejection
 - Application and loan status transitions
 - Administrator authorization helper
+- Authentication redirect allow-listing
+- Required public environment validation
 
 ## Database coverage
 
