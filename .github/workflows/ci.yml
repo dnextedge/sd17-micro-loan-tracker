@@ -41,3 +41,47 @@ jobs:
 
       - name: Build production bundle
         run: npm run build
+
+  database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start minimal Supabase database
+        run: >-
+          npx supabase start
+          --exclude gotrue,realtime,storage-api,imgproxy,kong,mailpit,postgrest,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
+
+      - name: Replay migrations and seed
+        run: npm run db:reset
+
+      - name: Lint database schema
+        run: npm run db:lint
+
+      - name: Run pgTAP database tests
+        run: npm run db:test
+
+      - name: Generate TypeScript database types
+        run: |
+          mkdir -p generated
+          npx supabase gen types typescript --local --schema public > generated/database.types.ts
+
+      - name: Upload generated database types
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-types
+          path: generated/database.types.ts
+          if-no-files-found: error
+          retention-days: 7
