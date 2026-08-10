@@ -127,7 +127,7 @@ See [docs/TESTING.md](docs/TESTING.md) for the planned business-logic, RLS, inte
 
 ## Deployment
 
-Vercel is the target application host and Supabase is the managed database/authentication provider. No production deployment is claimed yet. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+The Phase 1 foundation is deployed at [sd17-micro-loan-tracker.vercel.app](https://sd17-micro-loan-tracker.vercel.app). Vercel hosts the Next.js application, and Supabase is the planned managed database/authentication provider. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Demo Credentials
 
@@ -137,21 +137,21 @@ No login-capable demo accounts exist yet. Demo credentials will be created for t
 
 The table reports the current repository state, not the intended final state.
 
-| Requirement  | Implementation                        | Current status                              |
-| ------------ | ------------------------------------- | ------------------------------------------- |
-| Loan Request | Next.js/Supabase workflow             | Planned                                     |
-| Loan Status  | Application and loan lifecycle        | Planned                                     |
-| Repayments   | Immutable transactions and allocation | Planned                                     |
-| Deployment   | Vercel                                | Pending credentials                         |
-| HTML         | HTML5                                 | Foundation complete                         |
-| CSS          | CSS3/Tailwind CSS                     | Foundation complete                         |
-| JavaScript   | JavaScript/TypeScript                 | Foundation complete                         |
-| Framework    | React/Next.js                         | Foundation complete                         |
-| Backend      | Node.js via Next.js                   | Foundation complete                         |
-| Database     | PostgreSQL/Supabase                   | Local config complete; schema pending       |
-| Source Code  | GitHub                                | Local remote configured; first push pending |
-| README       | Included                              | Foundation complete                         |
-| Demo Video   | Link added before submission          | Pending MVP                                 |
+| Requirement  | Implementation                        | Current status                        |
+| ------------ | ------------------------------------- | ------------------------------------- |
+| Loan Request | Next.js/Supabase workflow             | Planned                               |
+| Loan Status  | Application and loan lifecycle        | Planned                               |
+| Repayments   | Immutable transactions and allocation | Planned                               |
+| Deployment   | Vercel                                | Foundation deployed                   |
+| HTML         | HTML5                                 | Foundation complete                   |
+| CSS          | CSS3/Tailwind CSS                     | Foundation complete                   |
+| JavaScript   | JavaScript/TypeScript                 | Foundation complete                   |
+| Framework    | React/Next.js                         | Foundation complete                   |
+| Backend      | Node.js via Next.js                   | Foundation complete                   |
+| Database     | PostgreSQL/Supabase                   | Local config complete; schema pending |
+| Source Code  | GitHub                                | Published                             |
+| README       | Included                              | Foundation complete                   |
+| Demo Video   | Link added before submission          | Pending MVP                           |
 
 See [docs/SD17_COMPLIANCE.md](docs/SD17_COMPLIANCE.md) for the acceptance checklist.
 
