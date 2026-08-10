@@ -4,7 +4,9 @@ Digital Micro-Loan Request & Repayment Tracking.
 
 LoanTrack NG is a 3MTT capstone project that will replace paper forms, notebooks, and disconnected spreadsheets with a focused workflow for requesting, reviewing, disbursing, and tracking micro-loans. It is a tracking and management system, not a licensed lender.
 
-> Development status: Phase 1 foundation complete. Authentication, loan workflows, and repayments are not implemented yet.
+> Development status: Phases 1 and 2 complete. The schema, RLS, synthetic seed,
+> pgTAP suites, database lint, and generated TypeScript types pass against a
+> clean Supabase stack in CI. Application workflows are not implemented yet.
 
 ## 3MTT Project Information
 
@@ -54,13 +56,15 @@ The browser renders React UI while authenticated reads execute in Next.js Server
 
 ## Database
 
-All monetary values will be stored as `BIGINT` minor units (kobo). The planned schema separates applications, loans, schedules, and immutable repayment transactions. See [docs/DATABASE.md](docs/DATABASE.md).
+All monetary values are stored as `BIGINT` minor units (kobo). The
+version-controlled schema separates applications, loans, schedules, and
+immutable repayment transactions. See [docs/DATABASE.md](docs/DATABASE.md).
 
 ## Security
 
 - Secrets are excluded from Git.
 - The service-role key must never use a `NEXT_PUBLIC_` prefix.
-- Borrower/admin authorization will be enforced in PostgreSQL RLS.
+- Borrower/admin record visibility is enforced in PostgreSQL RLS.
 - Sensitive financial and lifecycle operations will be transactional database functions.
 - Roles will not be accepted from client-controlled signup metadata.
 
@@ -103,7 +107,9 @@ npm run supabase:start
 npm run db:reset
 ```
 
-The first command requires Docker Desktop. Phase 2 will add version-controlled SQL migrations, RLS policies, database tests, and demonstration seed records.
+The first command requires Docker Desktop. `db:reset` replays the
+version-controlled migration and synthetic demonstration seed. Run `npm run
+db:test` afterward to execute the pgTAP constraint and RLS suites.
 
 ## Running Locally
 
@@ -120,6 +126,7 @@ npm run format:check
 npm run lint
 npm run typecheck
 npm test
+npm run db:test
 npm run build
 ```
 
@@ -131,27 +138,36 @@ The Phase 1 foundation is deployed at [sd17-micro-loan-tracker.vercel.app](https
 
 ## Demo Credentials
 
-No login-capable demo accounts exist yet. Demo credentials will be created for the submission environment, kept out of Git, and documented here only when safe to do so.
+The local-only synthetic seed creates these accounts:
+
+| Role     | Email                        | Password              |
+| -------- | ---------------------------- | --------------------- |
+| Borrower | `emem.borrower@example.test` | `LoanTrackDemo!2026`  |
+| Admin    | `admin@example.test`         | `LoanTrackAdmin!2026` |
+
+These `.test` accounts contain no real personal or financial information. The
+seed is not applied by `supabase db push`; production demonstration credentials
+must be created separately and rotated before public submission.
 
 ## SD-17 Compliance
 
 The table reports the current repository state, not the intended final state.
 
-| Requirement  | Implementation                        | Current status                        |
-| ------------ | ------------------------------------- | ------------------------------------- |
-| Loan Request | Next.js/Supabase workflow             | Planned                               |
-| Loan Status  | Application and loan lifecycle        | Planned                               |
-| Repayments   | Immutable transactions and allocation | Planned                               |
-| Deployment   | Vercel                                | Foundation deployed                   |
-| HTML         | HTML5                                 | Foundation complete                   |
-| CSS          | CSS3/Tailwind CSS                     | Foundation complete                   |
-| JavaScript   | JavaScript/TypeScript                 | Foundation complete                   |
-| Framework    | React/Next.js                         | Foundation complete                   |
-| Backend      | Node.js via Next.js                   | Foundation complete                   |
-| Database     | PostgreSQL/Supabase                   | Local config complete; schema pending |
-| Source Code  | GitHub                                | Published                             |
-| README       | Included                              | Foundation complete                   |
-| Demo Video   | Link added before submission          | Pending MVP                           |
+| Requirement  | Implementation                        | Current status                     |
+| ------------ | ------------------------------------- | ---------------------------------- |
+| Loan Request | Next.js/Supabase workflow             | Planned                            |
+| Loan Status  | Application and loan lifecycle        | Planned                            |
+| Repayments   | Immutable transactions and allocation | Planned                            |
+| Deployment   | Vercel                                | Foundation deployed                |
+| HTML         | HTML5                                 | Foundation complete                |
+| CSS          | CSS3/Tailwind CSS                     | Foundation complete                |
+| JavaScript   | JavaScript/TypeScript                 | Foundation complete                |
+| Framework    | React/Next.js                         | Foundation complete                |
+| Backend      | Node.js via Next.js                   | Foundation complete                |
+| Database     | PostgreSQL/Supabase                   | Schema/RLS verified in Supabase CI |
+| Source Code  | GitHub                                | Published                          |
+| README       | Included                              | Foundation complete                |
+| Demo Video   | Link added before submission          | Pending MVP                        |
 
 See [docs/SD17_COMPLIANCE.md](docs/SD17_COMPLIANCE.md) for the acceptance checklist.
 

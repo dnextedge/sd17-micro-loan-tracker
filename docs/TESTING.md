@@ -7,6 +7,7 @@ npm run format:check
 npm run lint
 npm run typecheck
 npm test
+npm run db:test
 npm run build
 ```
 
@@ -21,7 +22,23 @@ npm run build
 - Application and loan status transitions
 - Administrator authorization helper
 
-## Planned integration coverage
+## Database coverage
+
+The pgTAP suites under `supabase/tests` cover schema presence, integer-money
+constraints, allow-listed status transitions, derived overdue state, immutable
+repayments, borrower/application consistency, cross-borrower denial, and
+administrator visibility.
+
+They require the Docker-backed local Supabase runtime. An isolated PostgreSQL 17
+replay may be used as a supplementary syntax and policy smoke test, but it does
+not replace `npm run db:reset`, `npm run db:lint`, and `npm run db:test` against
+Supabase.
+
+GitHub CI runs those Supabase database gates on every pull request to `develop`
+or `main` and also verifies that the committed TypeScript database types match
+the replayed schema.
+
+## Planned application integration coverage
 
 - Anonymous access denial
 - Borrower A cannot access Borrower B
