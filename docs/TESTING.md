@@ -34,6 +34,10 @@ replay may be used as a supplementary syntax and policy smoke test, but it does
 not replace `npm run db:reset`, `npm run db:lint`, and `npm run db:test` against
 Supabase.
 
+GitHub CI runs those Supabase database gates on every pull request to `develop`
+or `main` and also verifies that the committed TypeScript database types match
+the replayed schema.
+
 ## Planned application integration coverage
 
 - Anonymous access denial

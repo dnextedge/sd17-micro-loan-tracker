@@ -4,10 +4,9 @@ Digital Micro-Loan Request & Repayment Tracking.
 
 LoanTrack NG is a 3MTT capstone project that will replace paper forms, notebooks, and disconnected spreadsheets with a focused workflow for requesting, reviewing, disbursing, and tracking micro-loans. It is a tracking and management system, not a licensed lender.
 
-> Development status: Phase 1 foundation complete. The Phase 2 schema, RLS,
-> seed, and pgTAP suites are authored and pass an isolated PostgreSQL replay;
-> the Docker-backed Supabase replay remains pending. Application workflows are
-> not implemented yet.
+> Development status: Phases 1 and 2 complete. The schema, RLS, synthetic seed,
+> pgTAP suites, database lint, and generated TypeScript types pass against a
+> clean Supabase stack in CI. Application workflows are not implemented yet.
 
 ## 3MTT Project Information
 
@@ -154,21 +153,21 @@ must be created separately and rotated before public submission.
 
 The table reports the current repository state, not the intended final state.
 
-| Requirement  | Implementation                        | Current status                              |
-| ------------ | ------------------------------------- | ------------------------------------------- |
-| Loan Request | Next.js/Supabase workflow             | Planned                                     |
-| Loan Status  | Application and loan lifecycle        | Planned                                     |
-| Repayments   | Immutable transactions and allocation | Planned                                     |
-| Deployment   | Vercel                                | Foundation deployed                         |
-| HTML         | HTML5                                 | Foundation complete                         |
-| CSS          | CSS3/Tailwind CSS                     | Foundation complete                         |
-| JavaScript   | JavaScript/TypeScript                 | Foundation complete                         |
-| Framework    | React/Next.js                         | Foundation complete                         |
-| Backend      | Node.js via Next.js                   | Foundation complete                         |
-| Database     | PostgreSQL/Supabase                   | Schema/RLS authored; Supabase reset pending |
-| Source Code  | GitHub                                | Published                                   |
-| README       | Included                              | Foundation complete                         |
-| Demo Video   | Link added before submission          | Pending MVP                                 |
+| Requirement  | Implementation                        | Current status                     |
+| ------------ | ------------------------------------- | ---------------------------------- |
+| Loan Request | Next.js/Supabase workflow             | Planned                            |
+| Loan Status  | Application and loan lifecycle        | Planned                            |
+| Repayments   | Immutable transactions and allocation | Planned                            |
+| Deployment   | Vercel                                | Foundation deployed                |
+| HTML         | HTML5                                 | Foundation complete                |
+| CSS          | CSS3/Tailwind CSS                     | Foundation complete                |
+| JavaScript   | JavaScript/TypeScript                 | Foundation complete                |
+| Framework    | React/Next.js                         | Foundation complete                |
+| Backend      | Node.js via Next.js                   | Foundation complete                |
+| Database     | PostgreSQL/Supabase                   | Schema/RLS verified in Supabase CI |
+| Source Code  | GitHub                                | Published                          |
+| README       | Included                              | Foundation complete                |
+| Demo Video   | Link added before submission          | Pending MVP                        |
 
 See [docs/SD17_COMPLIANCE.md](docs/SD17_COMPLIANCE.md) for the acceptance checklist.
 
