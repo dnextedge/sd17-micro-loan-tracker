@@ -9,7 +9,7 @@
 ## Current production deployment
 
 - Public URL: `https://sd17-micro-loan-tracker.vercel.app`
-- Deployment ID: `dpl_DYGLVnxhy3FQcx3p9pJu8D2ZDLUv`
+- Deployment ID: `dpl_8mtc4126mKXBxGZ6JTRN1Kmb71Pp`
 - Status verified: `Ready`
 - Initial deployment date: 10 August 2026
 - Scope: Phase 1 foundation only; authentication and business workflows are not yet deployed
