@@ -77,11 +77,10 @@ Passed:
 
 Not yet verified:
 
-- The initial owner-inbox reset tests exposed a cross-browser PKCE mismatch:
-  automation requested the email in one browser profile and the owner opened it
-  in another, where the required code verifier did not exist. Recovery now uses
-  the server callback and a short-lived HTTP-only recovery marker. The corrected
-  flow must be retested by requesting and opening the link in the same browser
-  profile.
+- The initial owner-inbox reset tests exposed a PKCE verifier mismatch in the
+  email round-trip. Recovery now uses Supabase's browser-only implicit recovery
+  event, removes the credential fragment from history immediately, and performs
+  the password update directly through Supabase. The corrected flow must still
+  be retested with a fresh single-use link.
 - Production/incognito authentication must be checked after the reviewed branch
   is merged and deployed to the production alias.

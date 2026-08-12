@@ -1,11 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
-import { getAppUrl } from "@/lib/env";
-import { RECOVERY_COOKIE_NAME } from "@/lib/password-recovery";
+import { getAppUrl, getSupabasePublicEnv } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
+import type { Database } from "@/types/database.types";
 
 const emailSchema = z.string().trim().email().max(254);
 const passwordSchema = z.string().min(8).max(72);
@@ -104,9 +104,16 @@ export async function requestPasswordReset(formData: FormData) {
     authRedirect("/forgot-password", "error", "Enter a valid email address.");
   }
 
-  const supabase = await createClient();
+  const { url, anonKey } = getSupabasePublicEnv();
+  const supabase = createSupabaseClient<Database>(url, anonKey, {
+    auth: {
+      autoRefreshToken: false,
+      flowType: "implicit",
+      persistSession: false,
+    },
+  });
   await supabase.auth.resetPasswordForEmail(parsed.data, {
-    redirectTo: `${getAppUrl()}/auth/callback?next=/update-password&flow=recovery`,
+    redirectTo: `${getAppUrl()}/update-password`,
   });
 
   authRedirect(
@@ -114,53 +121,6 @@ export async function requestPasswordReset(formData: FormData) {
     "message",
     "If the account exists, a password-reset link has been sent.",
   );
-}
-
-export async function updatePassword(formData: FormData) {
-  const cookieStore = await cookies();
-
-  if (cookieStore.get(RECOVERY_COOKIE_NAME)?.value !== "verified") {
-    authRedirect("/login", "error", "The password-reset session has expired.");
-  }
-
-  const parsed = z
-    .object({ password: passwordSchema, confirmPassword: passwordSchema })
-    .refine((input) => input.password === input.confirmPassword, {
-      message: "Passwords do not match.",
-    })
-    .safeParse({
-      password: value(formData, "password"),
-      confirmPassword: value(formData, "confirmPassword"),
-    });
-
-  if (!parsed.success) {
-    authRedirect(
-      "/update-password",
-      "error",
-      parsed.error.issues[0]?.message ?? "Enter a valid password.",
-    );
-  }
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    authRedirect("/login", "error", "The password-reset session has expired.");
-  }
-
-  const { error } = await supabase.auth.updateUser({
-    password: parsed.data.password,
-  });
-
-  if (error) {
-    authRedirect("/update-password", "error", "Password could not be updated.");
-  }
-
-  await supabase.auth.signOut();
-  cookieStore.delete(RECOVERY_COOKIE_NAME);
-  authRedirect("/login", "message", "Password updated. You can now sign in.");
 }
 
 export async function logout() {

@@ -41,6 +41,8 @@ Production deployment. Production continues to use `NEXT_PUBLIC_APP_URL`.
 - Production Site URL: `https://sd17-micro-loan-tracker.vercel.app`
 - Production and local `/auth/callback` paths are allow-listed, including their
   validated internal redirect query parameters.
+- Production and local `/update-password` paths are allow-listed for the
+  browser-only password recovery flow.
 - Vercel previews use the team-scoped
   `https://*-dnextedge-8904s-projects.vercel.app/**` pattern.
 - The CLI project is linked and migration `20260810160000` is applied.

@@ -11,18 +11,18 @@ callbacks accept only validated internal redirect paths. Password-reset
 requests return the same response whether or not an email exists to reduce
 account enumeration.
 
-Password recovery uses Supabase's PKCE flow. The reset link returns to a
-server-side callback, which exchanges the single-use authorization code before
-redirecting to the password form. A ten-minute HTTP-only, same-site recovery
-marker is issued only after a successful exchange; both that marker and a
-verified Supabase user are required by the password mutation. The marker is
-removed and the recovery session is signed out after a successful change.
+Password recovery deliberately uses Supabase's implicit browser flow while
+ordinary SSR authentication remains PKCE-based. This avoids PKCE verifier loss
+when a reset email opens outside the browser context that submitted the request.
+Supabase returns the recovery session in a URL fragment, which browsers do not
+send to Vercel or place in server access logs. The recovery client consumes the
+fragment, immediately removes it from browser history, updates the password only
+after Supabase emits `PASSWORD_RECOVERY`, and signs out after success.
 
-The reset request and email link must be completed in the same browser profile
-because PKCE keeps its verifier in that browser's secure session cookies. This
-constraint avoids placing reusable access tokens in the URL. Hosted custom
-email templates that support a browser-independent token-hash flow are not
-available with Supabase's Free-tier default email provider.
+Hosted custom email templates that support a server-side token-hash flow are
+not available with Supabase's Free-tier default email provider. A custom SMTP
+provider and token-hash confirmation route remain the preferred production
+upgrade.
 
 Supabase Auth uses the production Vercel URL as its Site URL. The redirect
 allow-list contains scoped production and local callback paths plus a
