@@ -55,9 +55,14 @@ export default async function DashboardPage({ searchParams }: Props) {
         <section className="mt-8 rounded-2xl border border-emerald-200 bg-emerald-50 p-6">
           <p className="font-bold text-emerald-900">Profile complete</p>
           <p className="mt-2 text-sm text-emerald-800">
-            Loan application functionality will be enabled in the next workflow
-            phase.
+            You can now submit and track a loan request.
           </p>
+          <Link
+            href="/applications/new"
+            className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-emerald-800 px-5 text-sm font-bold text-white"
+          >
+            Apply for a loan
+          </Link>
         </section>
       )}
     </div>

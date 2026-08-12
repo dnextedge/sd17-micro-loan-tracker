@@ -37,6 +37,14 @@ application belonging to another borrower. The
 `repayment_schedule_effective` security-invoker view derives overdue status
 when an unpaid installment is past its due date.
 
+Loan application submission and officer review use restricted PostgreSQL
+functions instead of direct table mutation grants. Submission verifies the
+authenticated borrower owns a completed profile and validates integer-kobo
+amounts, duration, dates, and text limits. Review locks the application and
+requires a database-verified administrator; the existing transition trigger
+rejects invalid lifecycle moves. Both paths write audit/status history in the
+same transaction.
+
 ## Transaction rules
 
 Application and loan transitions are allow-listed in PostgreSQL. Repayment

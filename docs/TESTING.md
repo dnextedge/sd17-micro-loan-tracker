@@ -69,6 +69,8 @@ Passed:
 - Anonymous dashboard access redirected to login.
 - Borrower profile values were saved and persisted through the server action.
 - Dashboard changed from profile-required to profile-complete state.
+- Loan application submission validates integer-kobo amounts, profile completion, duration, dates, and purpose text in server/database code.
+- Application review is restricted to database-verified administrators and uses allow-listed status transitions with immutable history/audit records.
 - Borrower access to `/admin` was denied server-side and redirected safely.
 - Registration/profile pages rendered meaningful content with no Next.js error overlay.
 - Vercel Preview deployment `dpl_GdKwo4G16J7C9rdhyfuwiuQTPsMi` reached

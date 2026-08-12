@@ -34,18 +34,32 @@ export default async function ProtectedLayout({
               Dashboard
             </Link>
             <Link
+              href="/applications"
+              className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+            >
+              Applications
+            </Link>
+            <Link
               href="/profile"
               className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
             >
               Profile
             </Link>
             {role === "admin" ? (
-              <Link
-                href="/admin"
-                className="rounded-lg px-3 py-2 text-sm font-semibold text-emerald-800 hover:bg-emerald-50"
-              >
-                Admin
-              </Link>
+              <>
+                <Link
+                  href="/admin"
+                  className="rounded-lg px-3 py-2 text-sm font-semibold text-emerald-800 hover:bg-emerald-50"
+                >
+                  Admin
+                </Link>
+                <Link
+                  href="/admin/applications"
+                  className="hidden rounded-lg px-3 py-2 text-sm font-semibold text-emerald-800 hover:bg-emerald-50 md:inline"
+                >
+                  Review
+                </Link>
+              </>
             ) : null}
             <form action={logout}>
               <button

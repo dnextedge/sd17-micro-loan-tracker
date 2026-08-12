@@ -38,6 +38,7 @@ origins.
 - Borrowers can create only their own draft applications; column grants exclude administrator notes and review timestamps.
 - Borrower profile updates use column-level grants, including only the structured name and minimal contact/work fields; RLS restricts the row to the authenticated owner.
 - Sensitive updates are unavailable as broad table grants and instead use restricted functions.
+- Loan application submission and review use security-definer functions with fixed empty search paths, explicit authentication/role checks, row locking, and allow-listed transitions.
 - Administrators are identified by a database-verified helper with fixed `search_path` and minimal grants.
 - Cross-borrower and borrower-to-admin denial is covered by pgTAP suites using authenticated JWT claims.
 

@@ -517,7 +517,24 @@ export type Database = {
       };
     };
     Functions: {
-      [_ in never]: never;
+      review_loan_application: {
+        Args: {
+          p_admin_notes?: string | null;
+          p_application_id: string;
+          p_new_status: Database["public"]["Enums"]["application_status"];
+        };
+        Returns: undefined;
+      };
+      submit_loan_application: {
+        Args: {
+          p_borrower_notes?: string | null;
+          p_preferred_start_date?: string | null;
+          p_purpose: string;
+          p_repayment_duration_months: number;
+          p_requested_amount: number;
+        };
+        Returns: string;
+      };
     };
     Enums: {
       app_role: "borrower" | "admin";
