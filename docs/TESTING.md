@@ -77,10 +77,10 @@ Passed:
 
 Not yet verified:
 
-- The initial owner-inbox reset tests exposed a PKCE verifier mismatch in the
-  email round-trip. Recovery now uses Supabase's browser-only implicit recovery
-  event, removes the credential fragment from history immediately, and performs
-  the password update directly through Supabase. The corrected flow must still
-  be retested with a fresh single-use link.
+- Password recovery passed an owner-inbox production test on 2026-08-12. The
+  fresh link emitted Supabase's browser recovery event, the password update
+  completed, the recovery session signed out, and the application returned to
+  sign-in with a success message. Earlier PKCE verifier failures are retained in
+  this record because they motivated the browser-only recovery design.
 - Production/incognito authentication must be checked after the reviewed branch
   is merged and deployed to the production alias.
