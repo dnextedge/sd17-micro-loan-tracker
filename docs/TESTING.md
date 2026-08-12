@@ -77,8 +77,11 @@ Passed:
 
 Not yet verified:
 
-- Password-reset email delivery and reset-link completion require a test account
-  with an inbox controlled by the project owner. No credential-bearing reset
-  link was sent to the synthetic E2E address.
+- The initial owner-inbox reset test exposed that Supabase's default recovery
+  template returned a browser-only session fragment. The application correctly
+  rejected the resulting unauthenticated update. Because hosted custom templates
+  are unavailable with the Free-tier default email provider, a browser recovery
+  bridge now consumes the one-time fragment into shared cookies before the
+  server-authorized password mutation. The corrected flow must be retested.
 - Production/incognito authentication must be checked after the reviewed branch
   is merged and deployed to the production alias.

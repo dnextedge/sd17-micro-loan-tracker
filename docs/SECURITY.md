@@ -11,6 +11,14 @@ callbacks accept only validated internal redirect paths. Password-reset
 requests return the same response whether or not an email exists to reduce
 account enumeration.
 
+Password recovery uses Supabase's browser recovery event because Free-tier
+projects using the default email provider cannot customize email templates.
+The browser client consumes the one-time session fragment, persists the session
+to cookies shared with the server client, and immediately removes the fragment
+from browser history. The password mutation still re-verifies the user
+server-side before calling Supabase; no authorization decision trusts only
+browser state.
+
 Supabase Auth uses the production Vercel URL as its Site URL. The redirect
 allow-list contains exact production and local callback paths plus a
 team-scoped Vercel preview wildcard; it does not allow arbitrary external
