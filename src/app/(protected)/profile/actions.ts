@@ -3,6 +3,11 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
+import {
+  buildFullName,
+  EMPLOYMENT_TYPES,
+  NIGERIAN_STATES,
+} from "@/lib/profile-options";
 import { createClient } from "@/lib/supabase/server";
 
 const optionalText = (maximum: number) =>
@@ -13,12 +18,14 @@ const optionalText = (maximum: number) =>
     .transform((entry) => entry || null);
 
 const profileSchema = z.object({
-  fullName: z.string().trim().min(2).max(120),
+  firstName: z.string().trim().min(2).max(60),
+  middleName: optionalText(60),
+  lastName: z.string().trim().min(2).max(60),
   phone: z.string().trim().min(7).max(20),
   address: optionalText(500),
-  state: z.string().trim().min(2).max(80),
+  state: z.enum(NIGERIAN_STATES),
   occupation: z.string().trim().min(2).max(120),
-  employmentType: optionalText(80),
+  employmentType: z.enum(EMPLOYMENT_TYPES),
   businessType: optionalText(120),
 });
 
@@ -29,7 +36,9 @@ function field(formData: FormData, name: string) {
 
 export async function updateProfile(formData: FormData) {
   const parsed = profileSchema.safeParse({
-    fullName: field(formData, "fullName"),
+    firstName: field(formData, "firstName"),
+    middleName: field(formData, "middleName"),
+    lastName: field(formData, "lastName"),
     phone: field(formData, "phone"),
     address: field(formData, "address"),
     state: field(formData, "state"),
@@ -49,7 +58,10 @@ export async function updateProfile(formData: FormData) {
   const { error } = await supabase
     .from("profiles")
     .update({
-      full_name: parsed.data.fullName,
+      first_name: parsed.data.firstName,
+      middle_name: parsed.data.middleName,
+      last_name: parsed.data.lastName,
+      full_name: buildFullName(parsed.data),
       phone: parsed.data.phone,
       address: parsed.data.address,
       state: parsed.data.state,

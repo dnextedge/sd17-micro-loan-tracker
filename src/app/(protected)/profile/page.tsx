@@ -1,4 +1,5 @@
 import { requireUser } from "@/lib/auth";
+import { EMPLOYMENT_TYPES, NIGERIAN_STATES } from "@/lib/profile-options";
 import { createClient } from "@/lib/supabase/server";
 import { updateProfile } from "./actions";
 
@@ -9,6 +10,15 @@ type Props = {
 const inputClassName =
   "min-h-12 rounded-xl border border-slate-300 bg-white px-4 text-base outline-none focus:border-emerald-700 focus:ring-4 focus:ring-emerald-100";
 
+function legacyNameParts(fullName: string | null | undefined) {
+  const parts = fullName?.trim().split(/\s+/) ?? [];
+  return {
+    firstName: parts.at(0) ?? "",
+    middleName: parts.length > 2 ? parts.slice(1, -1).join(" ") : "",
+    lastName: parts.length > 1 ? (parts.at(-1) ?? "") : "",
+  };
+}
+
 export default async function ProfilePage({ searchParams }: Props) {
   const user = await requireUser();
   const { message, error } = await searchParams;
@@ -16,10 +26,11 @@ export default async function ProfilePage({ searchParams }: Props) {
   const { data: profile } = await supabase
     .from("profiles")
     .select(
-      "full_name, phone, address, state, occupation, employment_type, business_type",
+      "first_name, middle_name, last_name, full_name, phone, address, state, occupation, employment_type, business_type",
     )
     .eq("user_id", user.id)
     .maybeSingle();
+  const fallbackName = legacyNameParts(profile?.full_name);
 
   return (
     <div className="max-w-3xl">
@@ -55,13 +66,33 @@ export default async function ProfilePage({ searchParams }: Props) {
         className="mt-8 grid gap-5 rounded-2xl border border-slate-200 bg-white p-6 sm:grid-cols-2 sm:p-8"
       >
         <label className="grid gap-2 text-sm font-semibold text-slate-700">
-          Full name
+          First name
           <input
             className={inputClassName}
-            name="fullName"
-            autoComplete="name"
+            name="firstName"
+            autoComplete="given-name"
             required
-            defaultValue={profile?.full_name ?? ""}
+            defaultValue={profile?.first_name ?? fallbackName.firstName}
+          />
+        </label>
+        <label className="grid gap-2 text-sm font-semibold text-slate-700">
+          Middle name{" "}
+          <span className="font-normal text-slate-500">(optional)</span>
+          <input
+            className={inputClassName}
+            name="middleName"
+            autoComplete="additional-name"
+            defaultValue={profile?.middle_name ?? fallbackName.middleName}
+          />
+        </label>
+        <label className="grid gap-2 text-sm font-semibold text-slate-700">
+          Last name
+          <input
+            className={inputClassName}
+            name="lastName"
+            autoComplete="family-name"
+            required
+            defaultValue={profile?.last_name ?? fallbackName.lastName}
           />
         </label>
         <label className="grid gap-2 text-sm font-semibold text-slate-700">
@@ -85,13 +116,22 @@ export default async function ProfilePage({ searchParams }: Props) {
         </label>
         <label className="grid gap-2 text-sm font-semibold text-slate-700">
           State
-          <input
+          <select
             className={inputClassName}
             name="state"
             autoComplete="address-level1"
             required
             defaultValue={profile?.state ?? ""}
-          />
+          >
+            <option value="" disabled>
+              Select a state
+            </option>
+            {NIGERIAN_STATES.map((state) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
         </label>
         <label className="grid gap-2 text-sm font-semibold text-slate-700">
           Occupation
@@ -105,15 +145,25 @@ export default async function ProfilePage({ searchParams }: Props) {
         </label>
         <label className="grid gap-2 text-sm font-semibold text-slate-700">
           Employment type
-          <input
+          <select
             className={inputClassName}
             name="employmentType"
-            placeholder="Self-employed"
             defaultValue={profile?.employment_type ?? ""}
-          />
+            required
+          >
+            <option value="" disabled>
+              Select employment type
+            </option>
+            {EMPLOYMENT_TYPES.map((employmentType) => (
+              <option key={employmentType} value={employmentType}>
+                {employmentType}
+              </option>
+            ))}
+          </select>
         </label>
         <label className="grid gap-2 text-sm font-semibold text-slate-700">
-          Business type
+          Business or industry type{" "}
+          <span className="font-normal text-slate-500">(optional)</span>
           <input
             className={inputClassName}
             name="businessType"

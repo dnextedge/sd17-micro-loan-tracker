@@ -24,6 +24,13 @@ UUID primary keys, `timestamptz`, foreign keys, checks, unique human-readable
 numbers, and query-specific indexes are defined in
 `supabase/migrations/20260810160000_initial_schema.sql`.
 
+Borrower names are stored as structured `first_name`, optional `middle_name`,
+and `last_name` values. The existing `full_name` column remains the derived
+display/search value for compatibility. Profile mutations allow-list all 36
+Nigerian states plus the Federal Capital Territory and a concise set of MVP
+employment categories; the database repeats those constraints as defence in
+depth.
+
 Application and loan states use PostgreSQL enums and allow-listed transition
 functions. A composite foreign key prevents a loan from being attached to an
 application belonging to another borrower. The

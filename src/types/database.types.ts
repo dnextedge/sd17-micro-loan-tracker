@@ -274,8 +274,11 @@ export type Database = {
           created_at: string;
           email: string | null;
           employment_type: string | null;
+          first_name: string | null;
           full_name: string | null;
           id: string;
+          last_name: string | null;
+          middle_name: string | null;
           occupation: string | null;
           phone: string | null;
           profile_completed_at: string | null;
@@ -289,8 +292,11 @@ export type Database = {
           created_at?: string;
           email?: string | null;
           employment_type?: string | null;
+          first_name?: string | null;
           full_name?: string | null;
           id?: string;
+          last_name?: string | null;
+          middle_name?: string | null;
           occupation?: string | null;
           phone?: string | null;
           profile_completed_at?: string | null;
@@ -304,8 +310,11 @@ export type Database = {
           created_at?: string;
           email?: string | null;
           employment_type?: string | null;
+          first_name?: string | null;
           full_name?: string | null;
           id?: string;
+          last_name?: string | null;
+          middle_name?: string | null;
           occupation?: string | null;
           phone?: string | null;
           profile_completed_at?: string | null;
