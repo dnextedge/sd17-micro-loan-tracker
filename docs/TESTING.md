@@ -77,11 +77,11 @@ Passed:
 
 Not yet verified:
 
-- The initial owner-inbox reset test exposed that Supabase's default recovery
-  template returned a browser-only session fragment. The application correctly
-  rejected the resulting unauthenticated update. Because hosted custom templates
-  are unavailable with the Free-tier default email provider, a browser recovery
-  bridge now consumes the one-time fragment into shared cookies before the
-  server-authorized password mutation. The corrected flow must be retested.
+- The initial owner-inbox reset tests exposed a cross-browser PKCE mismatch:
+  automation requested the email in one browser profile and the owner opened it
+  in another, where the required code verifier did not exist. Recovery now uses
+  the server callback and a short-lived HTTP-only recovery marker. The corrected
+  flow must be retested by requesting and opening the link in the same browser
+  profile.
 - Production/incognito authentication must be checked after the reviewed branch
   is merged and deployed to the production alias.

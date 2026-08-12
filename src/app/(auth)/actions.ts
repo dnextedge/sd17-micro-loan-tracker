@@ -1,8 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { z } from "zod";
 import { getAppUrl } from "@/lib/env";
+import { RECOVERY_COOKIE_NAME } from "@/lib/password-recovery";
 import { createClient } from "@/lib/supabase/server";
 
 const emailSchema = z.string().trim().email().max(254);
@@ -104,7 +106,7 @@ export async function requestPasswordReset(formData: FormData) {
 
   const supabase = await createClient();
   await supabase.auth.resetPasswordForEmail(parsed.data, {
-    redirectTo: `${getAppUrl()}/update-password`,
+    redirectTo: `${getAppUrl()}/auth/callback?next=/update-password&flow=recovery`,
   });
 
   authRedirect(
@@ -115,6 +117,12 @@ export async function requestPasswordReset(formData: FormData) {
 }
 
 export async function updatePassword(formData: FormData) {
+  const cookieStore = await cookies();
+
+  if (cookieStore.get(RECOVERY_COOKIE_NAME)?.value !== "verified") {
+    authRedirect("/login", "error", "The password-reset session has expired.");
+  }
+
   const parsed = z
     .object({ password: passwordSchema, confirmPassword: passwordSchema })
     .refine((input) => input.password === input.confirmPassword, {
@@ -150,6 +158,8 @@ export async function updatePassword(formData: FormData) {
     authRedirect("/update-password", "error", "Password could not be updated.");
   }
 
+  await supabase.auth.signOut();
+  cookieStore.delete(RECOVERY_COOKIE_NAME);
   authRedirect("/login", "message", "Password updated. You can now sign in.");
 }
 

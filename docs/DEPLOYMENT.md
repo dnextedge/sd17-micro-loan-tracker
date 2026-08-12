@@ -39,9 +39,8 @@ Production deployment. Production continues to use `NEXT_PUBLIC_APP_URL`.
 
 - Project: `LoanTrack NG` (`qrtenbcdiqdgehzonejb`), West EU (Ireland)
 - Production Site URL: `https://sd17-micro-loan-tracker.vercel.app`
-- Exact production and local `/auth/callback` URLs are allow-listed.
-- Exact production and local `/update-password` URLs are allow-listed for the
-  Free-tier recovery flow.
+- Production and local `/auth/callback` paths are allow-listed, including their
+  validated internal redirect query parameters.
 - Vercel previews use the team-scoped
   `https://*-dnextedge-8904s-projects.vercel.app/**` pattern.
 - The CLI project is linked and migration `20260810160000` is applied.
