@@ -11,6 +11,11 @@ callbacks accept only validated internal redirect paths. Password-reset
 requests return the same response whether or not an email exists to reduce
 account enumeration.
 
+Supabase Auth uses the production Vercel URL as its Site URL. The redirect
+allow-list contains exact production and local callback paths plus a
+team-scoped Vercel preview wildcard; it does not allow arbitrary external
+origins.
+
 ## RLS strategy
 
 - RLS is enabled on every public application table.

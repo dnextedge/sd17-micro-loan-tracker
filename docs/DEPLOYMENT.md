@@ -12,7 +12,8 @@
 - Deployment ID: `dpl_8mtc4126mKXBxGZ6JTRN1Kmb71Pp`
 - Status verified: `Ready`
 - Initial deployment date: 10 August 2026
-- Scope: Phase 1 foundation only; authentication and business workflows are not yet deployed
+- Scope: Phase 1 foundation deployment; the Phase 3 authentication branch is
+  awaiting a fresh production deployment and end-to-end verification
 
 The public alias returned HTTP 200 with HTTPS and HSTS enabled. Automatic Git deployments remain disconnected until the Vercel account adds its GitHub login connection; direct CLI deployment is working.
 
@@ -24,11 +25,25 @@ The public alias returned HTTP 200 with HTTPS and HSTS enabled. Automatic Git de
 - Output: Next.js default
 - Node.js: 22
 
-Configure `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `NEXT_PUBLIC_APP_URL` for Preview and Production. Add a service-role key only if a reviewed server-only task requires it.
+`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and
+`NEXT_PUBLIC_APP_URL` are configured in Vercel for Production and Preview.
+Development uses the same Supabase project with `NEXT_PUBLIC_APP_URL` set to
+`http://localhost:3000`. Add a service-role key only if a reviewed server-only
+task requires it.
+
+Server-side authentication actions prefer the deployment-specific `VERCEL_URL`
+in Preview, preventing confirmation and reset callbacks from crossing into the
+Production deployment. Production continues to use `NEXT_PUBLIC_APP_URL`.
 
 ## Supabase configuration
 
-Add local and production callback URLs to the Auth redirect allow-list. Link the CLI project, preview migrations, and deploy only reviewed migrations. Demo seed data must never be pushed into a real production dataset accidentally.
+- Project: `LoanTrack NG` (`qrtenbcdiqdgehzonejb`), West EU (Ireland)
+- Production Site URL: `https://sd17-micro-loan-tracker.vercel.app`
+- Exact production and local `/auth/callback` URLs are allow-listed.
+- Vercel previews use the team-scoped
+  `https://*-dnextedge-8904s-projects.vercel.app/**` pattern.
+- The CLI project is linked and migration `20260810160000` is applied.
+- Demo seed data must never be pushed into a real production dataset accidentally.
 
 ## Release verification
 
@@ -39,4 +54,6 @@ Add local and production callback URLs to the Auth redirect allow-list. Link the
 5. Record the production URL and evidence.
 6. Tag the verified commit `v1.0.0-3mtt-submission`.
 
-The foundation deployment is complete. Full MVP production verification, Supabase environment variables, authentication redirects, and incognito workflow QA remain future release gates.
+The foundation deployment and hosted Supabase schema are complete. A fresh
+Phase 3 deployment, authentication verification, and incognito workflow QA
+remain release gates.

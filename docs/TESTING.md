@@ -53,3 +53,32 @@ the replayed schema.
 Registration, login, reset, profile, application submission, admin review, approval, rejection, disbursement, schedule, repayment, overdue/full repayment, search/filter, responsive layouts, logout, Vercel environment, and incognito sessions must be checked before release.
 
 Test results must be reported accurately; skipped or failing tests cannot be described as passing.
+
+## Phase 3 verification — 12 August 2026
+
+Environment: local Next.js 16.3.0 server using the hosted `LoanTrack NG`
+Supabase project (`qrtenbcdiqdgehzonejb`). Test records were clearly labeled as
+E2E demonstration data.
+
+Passed:
+
+- Registration created an authenticated borrower account.
+- The signup trigger created the borrower profile and borrower role.
+- Session cookies persisted across protected dashboard/profile navigation.
+- Login and logout completed successfully.
+- Anonymous dashboard access redirected to login.
+- Borrower profile values were saved and persisted through the server action.
+- Dashboard changed from profile-required to profile-complete state.
+- Borrower access to `/admin` was denied server-side and redirected safely.
+- Registration/profile pages rendered meaningful content with no Next.js error overlay.
+- Vercel Preview deployment `dpl_GdKwo4G16J7C9rdhyfuwiuQTPsMi` reached
+  `READY`; `/login` returned 200 and anonymous `/dashboard` returned the
+  expected 307 redirect.
+
+Not yet verified:
+
+- Password-reset email delivery and reset-link completion require a test account
+  with an inbox controlled by the project owner. No credential-bearing reset
+  link was sent to the synthetic E2E address.
+- Production/incognito authentication must be checked after the reviewed branch
+  is merged and deployed to the production alias.

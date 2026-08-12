@@ -22,6 +22,10 @@ export function getSupabasePublicEnv() {
 }
 
 export function getAppUrl() {
+  if (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL.replace(/^https?:\/\//, "").replace(/\/$/, "")}`;
+  }
+
   const configuredUrl = process.env.NEXT_PUBLIC_APP_URL;
 
   if (configuredUrl) {

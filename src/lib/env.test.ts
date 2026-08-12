@@ -30,4 +30,12 @@ describe("public environment validation", () => {
     process.env.NEXT_PUBLIC_APP_URL = "https://loantrack.example/";
     expect(getAppUrl()).toBe("https://loantrack.example");
   });
+
+  it("uses the current Vercel deployment URL for previews", () => {
+    process.env.VERCEL_ENV = "preview";
+    process.env.VERCEL_URL = "loantrack-feature-team.vercel.app/";
+    process.env.NEXT_PUBLIC_APP_URL = "https://loantrack.example";
+
+    expect(getAppUrl()).toBe("https://loantrack-feature-team.vercel.app");
+  });
 });
