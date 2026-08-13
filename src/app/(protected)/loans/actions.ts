@@ -132,3 +132,36 @@ export async function recordRepayment(formData: FormData) {
     `/admin/loans/${parsed.data.loanId}?message=Repayment+recorded+and+balance+updated`,
   );
 }
+
+export async function completeLoan(formData: FormData) {
+  await requireAdmin();
+  const parsed = z
+    .object({
+      loanId: z.string().uuid(),
+      notes: z.string().trim().max(1000),
+    })
+    .safeParse({
+      loanId: field(formData, "loanId"),
+      notes: field(formData, "notes"),
+    });
+
+  if (!parsed.success) {
+    redirect("/admin/loans?error=Check+the+completion+information");
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("complete_loan", {
+    p_loan_id: parsed.data.loanId,
+    ...(parsed.data.notes ? { p_notes: parsed.data.notes } : {}),
+  });
+
+  if (error) {
+    redirect(
+      `/admin/loans/${parsed.data.loanId}?error=The+loan+could+not+be+completed`,
+    );
+  }
+
+  redirect(
+    `/admin/loans/${parsed.data.loanId}?message=Loan+lifecycle+completed`,
+  );
+}

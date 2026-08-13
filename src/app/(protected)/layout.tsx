@@ -54,6 +54,24 @@ export default async function ProtectedLayout({
                 >
                   Repayments
                 </Link>
+                <Link
+                  href="/admin/borrowers"
+                  className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  Borrowers
+                </Link>
+                <Link
+                  href="/admin/reports"
+                  className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  Reports
+                </Link>
+                <Link
+                  href="/admin/settings"
+                  className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  Settings
+                </Link>
               </>
             ) : (
               <>

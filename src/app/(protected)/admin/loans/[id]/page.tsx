@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { disburseLoan, recordRepayment } from "@/app/(protected)/loans/actions";
+import {
+  completeLoan,
+  disburseLoan,
+  recordRepayment,
+} from "@/app/(protected)/loans/actions";
 import { requireAdmin } from "@/lib/auth";
 import { dateInputAfterDays, formatDate } from "@/lib/date";
 import { LOAN_STATUS_LABELS, loanStatusBadgeClass } from "@/lib/loan-status";
@@ -162,6 +166,34 @@ export default async function AdminLoanDetails({
           </label>
           <button className="mt-5 min-h-11 rounded-xl bg-blue-800 px-5 font-bold text-white">
             Mark disbursed
+          </button>
+        </form>
+      ) : null}
+
+      {loan.status === "fully_repaid" ? (
+        <form
+          action={completeLoan}
+          className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-6"
+        >
+          <input type="hidden" name="loanId" value={loan.id} />
+          <h2 className="text-lg font-bold text-slate-950">
+            Complete loan lifecycle
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            The balance is zero and every installment is paid. Confirm that the
+            records have been reviewed before closing this loan.
+          </p>
+          <label className="mt-5 grid gap-2 text-sm font-bold text-slate-700">
+            Completion notes (optional)
+            <textarea
+              name="notes"
+              maxLength={1000}
+              placeholder="Final records verified"
+              className="min-h-20 rounded-xl border border-slate-300 bg-white p-4 font-normal"
+            />
+          </label>
+          <button className="mt-5 min-h-11 rounded-xl bg-emerald-800 px-5 font-bold text-white">
+            Mark completed
           </button>
         </form>
       ) : null}

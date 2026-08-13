@@ -68,6 +68,12 @@ and records audit/lifecycle history in the same transaction. A zero balance
 changes the loan to `fully_repaid`; an unpaid past-due installment changes it
 to `overdue`.
 
+Final administrative closure uses the restricted `complete_loan` function. It
+locks the loan, requires the `fully_repaid` state, verifies a zero outstanding
+balance and a completely paid schedule, and then records the `completed`
+transition and audit event atomically. Repeated completion requests are
+idempotent.
+
 ## Demonstration data
 
 `supabase/seed.sql` contains synthetic, clearly labelled local demonstration

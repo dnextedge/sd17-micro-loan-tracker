@@ -45,6 +45,10 @@ origins.
   validates integer-kobo amounts and dates, rejects overpayment, allocates the
   oldest balances first, and commits the transaction, aggregates, schedule
   state, lifecycle state, and audit entry atomically.
+- Loan completion uses an administrator-only security-definer function with a
+  fixed empty search path. It locks the loan and independently verifies the
+  fully-repaid status, zero balance, and fully paid schedule before permitting
+  the final `completed` transition.
 - Administrators are identified by a database-verified helper with fixed `search_path` and minimal grants.
 - Cross-borrower and borrower-to-admin denial is covered by pgTAP suites using authenticated JWT claims.
 
@@ -67,7 +71,8 @@ loan-to-installment constraints, and atomic transactions protect balances and
 lifecycle state. Schedule rows must sum to the loan total; any division
 remainder is isolated in the final installment. Repayment rows cannot be
 updated or deleted by authenticated application users, preserving transaction
-history rather than allowing a balance to be overwritten.
+history rather than allowing a balance to be overwritten. A loan cannot be
+marked completed while any balance or scheduled installment remains unpaid.
 
 ## Data minimization
 

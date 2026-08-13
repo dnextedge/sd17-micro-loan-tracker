@@ -517,6 +517,10 @@ export type Database = {
       };
     };
     Functions: {
+      complete_loan: {
+        Args: { p_loan_id: string; p_notes?: string };
+        Returns: undefined;
+      };
       create_loan_from_application: {
         Args: { p_application_id: string; p_interest_rate?: number };
         Returns: string;

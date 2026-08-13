@@ -32,7 +32,7 @@ repayments, borrower/application consistency, cross-borrower denial,
 administrator visibility, administrator-only loan creation and repayment
 recording, idempotency, interest totals, disbursement, exact schedule totals,
 partial/cross-installment/full repayment allocation, aggregate balances,
-history, and audit data.
+history, audit data, and administrator-only fully-repaid loan completion.
 
 They require the Docker-backed local Supabase runtime. An isolated PostgreSQL 17
 replay may be used as a supplementary syntax and policy smoke test, but it does
@@ -143,3 +143,31 @@ Hosted rollout passed:
 
 Authenticated production/private-browser QA remains a release gate because no
 production password was stored in the repository or automation environment.
+
+## Phase 6 verification — 13 August 2026
+
+Passed locally before deployment:
+
+- Clean Supabase migration replay and database lint with no findings.
+- 85 pgTAP assertions, including administrator-only final loan completion,
+  incomplete-loan rejection, idempotency, immutable history, and audit data.
+- TypeScript strict check, ESLint, and formatting.
+- 26 Vitest assertions and a successful Next.js 16.3.0 production build.
+- React/Next.js review confirmed server-rendered reads, parallel independent
+  queries, server-side administrator authorization, and no added client bundle.
+- Authenticated administrator browser QA verified application, borrower,
+  installment-status, payment-method, amount, date, and text filters; the live
+  portfolio report; and the documented MVP settings boundary.
+- The administrator recorded the final synthetic ₦80,000 repayment, all six
+  installments became paid, the balance reached zero, and the loan entered
+  `fully_repaid` before the administrator completed it.
+- The borrower saw the completed loan and zero balance, while direct access to
+  the administrator report remained denied server-side.
+- At a 390 × 844 viewport, the page had no body overflow, form controls stayed
+  within the viewport, and the long role navigation remained horizontally
+  scrollable.
+- No browser console errors appeared. The local database was reset afterward,
+  restoring the documented ₦40,000-repaid synthetic seed state.
+
+Hosted rollout is recorded after it runs and must not be inferred from these
+local results.

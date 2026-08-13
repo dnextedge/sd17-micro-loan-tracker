@@ -18,5 +18,7 @@ npm run db:test
   negative and excessive payment rejection, partial and cross-installment
   allocation, aggregate balances, full repayment, immutable transaction
   preservation, audit data, and borrower visibility.
+- `040_loan_completion.test.sql` covers administrator-only final completion,
+  unpaid-loan rejection, status history, audit data, and idempotency.
 
 All fixtures are synthetic and every suite runs inside a rolled-back transaction.

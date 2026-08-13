@@ -37,9 +37,10 @@ The submission MVP includes or is implementing:
 - Administrator review, approval, and rejection
 - Loan disbursement and repayment schedule generation
 - Immutable repayment transactions and allocation
+- Administrator-only fully-repaid loan completion
 - Outstanding balance and overdue detection
 - Borrower and administrator dashboards
-- Status history, audit logs, search, and filters
+- Status history, audit logs, portfolio reporting, search, and filters
 - PostgreSQL Row Level Security
 
 ## Technology Stack
