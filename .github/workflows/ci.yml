@@ -75,6 +75,7 @@ jobs:
 
       - name: Verify generated TypeScript database types
         run: |
-          npx supabase gen types typescript --local --schema public > /tmp/database.types.ts
-          npx prettier --write /tmp/database.types.ts
-          diff --unified src/types/database.types.ts /tmp/database.types.ts
+          npx supabase gen types typescript --local --schema public > src/types/database.types.generated.ts
+          npx prettier --write src/types/database.types.generated.ts
+          diff --unified src/types/database.types.ts src/types/database.types.generated.ts
+          rm src/types/database.types.generated.ts
