@@ -14,5 +14,9 @@ npm run db:test
 - `020_loan_workflow.test.sql` covers administrator-only loan creation,
   idempotency, exact interest and installment totals, disbursement, schedule
   generation, history, audit records, and borrower visibility.
+- `030_repayment_workflow.test.sql` covers administrator-only recording,
+  negative and excessive payment rejection, partial and cross-installment
+  allocation, aggregate balances, full repayment, immutable transaction
+  preservation, audit data, and borrower visibility.
 
 All fixtures are synthetic and every suite runs inside a rolled-back transaction.

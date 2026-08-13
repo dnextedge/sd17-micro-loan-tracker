@@ -30,6 +30,10 @@ LoanTrack NG records
 - Loan creation and disbursement Server Actions remain thin: they re-authorize
   the administrator and delegate the financial transaction to restricted
   PostgreSQL RPCs.
+- Repayment recording follows the same boundary: the Server Action validates
+  form shape and converts naira input to integer kobo, while the restricted
+  PostgreSQL RPC performs authorization, locking, allocation, aggregates,
+  status changes, transaction history, and auditing atomically.
 - Route Handlers are reserved for auth callbacks and genuine HTTP integrations.
 - Node.js is the default runtime.
 - Production builds use Next.js's supported webpack builder because Turbopack's CSS worker cannot bind its internal port in the managed Codex environment. Development can continue to use the default Next.js dev bundler.
@@ -39,9 +43,9 @@ LoanTrack NG records
   remains the final authorization boundary.
 
 Administrator and borrower navigation are role-specific. Administrator routes
-use `/admin/applications` and `/admin/loans`; borrower reads use `/applications`
-and `/loans`, with PostgreSQL RLS applying ownership at both list and detail
-levels.
+use `/admin/applications`, `/admin/loans`, and `/admin/repayments`; borrower
+reads use `/applications`, `/loans`, and `/repayments`, with PostgreSQL RLS
+applying ownership at both list and detail levels.
 
 ## Trust boundaries
 

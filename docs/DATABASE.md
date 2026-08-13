@@ -60,10 +60,13 @@ requests are idempotent and cannot generate duplicate loans or schedules.
 
 Application and loan transitions are allow-listed in PostgreSQL. Repayment
 rows, lifecycle history, and audit rows are append-only. Loan creation,
-disbursement, and schedule generation are atomic and database-authorized.
-Repayment allocation is the next workflow phase; it will lock the loan, insert
-an immutable transaction, allocate oldest outstanding installments, recalculate
-aggregates, and record history in one transaction.
+disbursement, schedule generation, and repayment recording are atomic and
+database-authorized. `record_repayment` locks the loan and its unpaid schedules,
+rejects invalid or excessive amounts, inserts one immutable transaction,
+allocates oldest outstanding installments first, recalculates loan aggregates,
+and records audit/lifecycle history in the same transaction. A zero balance
+changes the loan to `fully_repaid`; an unpaid past-due installment changes it
+to `overdue`.
 
 ## Demonstration data
 

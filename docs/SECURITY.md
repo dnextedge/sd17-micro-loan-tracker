@@ -40,6 +40,11 @@ origins.
 - Sensitive updates are unavailable as broad table grants and instead use restricted functions.
 - Loan application submission and review use security-definer functions with fixed empty search paths, explicit authentication/role checks, row locking, and allow-listed transitions.
 - Loan creation and disbursement use administrator-only security-definer functions with fixed empty search paths, row locks, idempotency controls, and atomic history/audit writes; authenticated users retain no direct loan or schedule mutation grants.
+- Repayment recording uses an administrator-only security-definer function with
+  a fixed empty search path. It locks the loan and outstanding schedules,
+  validates integer-kobo amounts and dates, rejects overpayment, allocates the
+  oldest balances first, and commits the transaction, aggregates, schedule
+  state, lifecycle state, and audit entry atomically.
 - Administrators are identified by a database-verified helper with fixed `search_path` and minimal grants.
 - Cross-borrower and borrower-to-admin denial is covered by pgTAP suites using authenticated JWT claims.
 
@@ -60,7 +65,9 @@ Positive-amount constraints, exact minor-unit arithmetic, valid-transition
 functions, immutable repayment rows, row locks, unique application-to-loan and
 loan-to-installment constraints, and atomic transactions protect balances and
 lifecycle state. Schedule rows must sum to the loan total; any division
-remainder is isolated in the final installment.
+remainder is isolated in the final installment. Repayment rows cannot be
+updated or deleted by authenticated application users, preserving transaction
+history rather than allowing a balance to be overwritten.
 
 ## Data minimization
 

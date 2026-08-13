@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
+import { formatDate } from "@/lib/date";
+import { formatKobo } from "@/lib/money";
 import { createClient } from "@/lib/supabase/server";
 
 type Props = { searchParams: Promise<{ error?: string }> };
@@ -8,11 +10,31 @@ export default async function DashboardPage({ searchParams }: Props) {
   const user = await requireUser();
   const { error } = await searchParams;
   const supabase = await createClient();
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, profile_completed_at")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const [{ data: profile }, { data: loans }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("full_name, profile_completed_at")
+      .eq("user_id", user.id)
+      .maybeSingle(),
+    supabase
+      .from("loans")
+      .select(
+        "id, loan_number, principal_amount, amount_repaid, outstanding_balance, status",
+      )
+      .order("created_at", { ascending: false })
+      .limit(1),
+  ]);
+  const activeLoan = loans?.[0];
+  const { data: nextSchedule } = activeLoan
+    ? await supabase
+        .from("repayment_schedule_effective")
+        .select("due_date, outstanding_amount, effective_status")
+        .eq("loan_id", activeLoan.id)
+        .gt("outstanding_amount", 0)
+        .order("installment_number")
+        .limit(1)
+        .maybeSingle()
+    : { data: null };
 
   return (
     <div>
@@ -65,6 +87,55 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         </section>
       )}
+      {activeLoan ? (
+        <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
+          <div className="flex flex-wrap justify-between gap-3">
+            <div>
+              <p className="text-sm font-bold text-slate-500">Current loan</p>
+              <h2 className="mt-1 text-xl font-bold">
+                {activeLoan.loan_number}
+              </h2>
+            </div>
+            <Link
+              href={`/loans/${activeLoan.id}`}
+              className="font-bold text-emerald-800"
+            >
+              View loan →
+            </Link>
+          </div>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <DashboardMetric
+              label="Principal"
+              value={formatKobo(activeLoan.principal_amount)}
+            />
+            <DashboardMetric
+              label="Amount repaid"
+              value={formatKobo(activeLoan.amount_repaid)}
+            />
+            <DashboardMetric
+              label="Outstanding"
+              value={formatKobo(activeLoan.outstanding_balance)}
+            />
+            <DashboardMetric
+              label="Next repayment"
+              value={
+                nextSchedule
+                  ? `${formatKobo(nextSchedule.outstanding_amount ?? 0)} · ${formatDate(nextSchedule.due_date)}`
+                  : "Completed"
+              }
+            />
+          </div>
+        </section>
+      ) : null}
+    </div>
+  );
+}
+
+function DashboardMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-sm font-bold text-slate-500">{label}</p>
+      <p className="mt-1 font-semibold text-slate-950">{value}</p>
     </div>
   );
 }

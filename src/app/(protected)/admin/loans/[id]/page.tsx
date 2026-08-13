@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { disburseLoan } from "@/app/(protected)/loans/actions";
+import { disburseLoan, recordRepayment } from "@/app/(protected)/loans/actions";
 import { requireAdmin } from "@/lib/auth";
 import { dateInputAfterDays, formatDate } from "@/lib/date";
 import { LOAN_STATUS_LABELS, loanStatusBadgeClass } from "@/lib/loan-status";
@@ -22,27 +22,38 @@ export default async function AdminLoanDetails({
     searchParams,
   ]);
   const supabase = await createClient();
-  const [{ data: loan }, { data: schedule }, { data: history }] =
-    await Promise.all([
-      supabase
-        .from("loans")
-        .select(
-          "*, profiles!loans_borrower_id_fkey(full_name, phone, email), loan_applications!loans_loan_application_id_fkey(application_number, preferred_start_date, purpose)",
-        )
-        .eq("id", id)
-        .maybeSingle(),
-      supabase
-        .from("repayment_schedule_effective")
-        .select("*")
-        .eq("loan_id", id)
-        .order("installment_number"),
-      supabase
-        .from("loan_status_history")
-        .select("id, previous_status, new_status, notes, created_at")
-        .eq("entity_type", "loan")
-        .eq("entity_id", id)
-        .order("created_at"),
-    ]);
+  const [
+    { data: loan },
+    { data: schedule },
+    { data: history },
+    { data: repayments },
+  ] = await Promise.all([
+    supabase
+      .from("loans")
+      .select(
+        "*, profiles!loans_borrower_id_fkey(full_name, phone, email), loan_applications!loans_loan_application_id_fkey(application_number, preferred_start_date, purpose)",
+      )
+      .eq("id", id)
+      .maybeSingle(),
+    supabase
+      .from("repayment_schedule_effective")
+      .select("*")
+      .eq("loan_id", id)
+      .order("installment_number"),
+    supabase
+      .from("loan_status_history")
+      .select("id, previous_status, new_status, notes, created_at")
+      .eq("entity_type", "loan")
+      .eq("entity_id", id)
+      .order("created_at"),
+    supabase
+      .from("repayments")
+      .select(
+        "id, payment_reference, amount, payment_method, payment_date, notes, created_at",
+      )
+      .eq("loan_id", id)
+      .order("created_at", { ascending: false }),
+  ]);
   if (!loan) notFound();
 
   const preferredDate = loan.loan_applications?.preferred_start_date;
@@ -155,6 +166,78 @@ export default async function AdminLoanDetails({
         </form>
       ) : null}
 
+      {["disbursed", "active", "overdue", "defaulted"].includes(loan.status) ? (
+        <form
+          action={recordRepayment}
+          className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-6"
+        >
+          <input type="hidden" name="loanId" value={loan.id} />
+          <h2 className="text-lg font-bold text-slate-950">Record repayment</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            A permanent transaction will be created and allocated to the oldest
+            outstanding installment. Current balance:{" "}
+            {formatKobo(loan.outstanding_balance)}.
+          </p>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <label className="grid gap-2 text-sm font-bold text-slate-700">
+              Amount received (₦)
+              <input
+                type="number"
+                name="amount"
+                min="0.01"
+                max={loan.outstanding_balance / 100}
+                step="0.01"
+                required
+                className="min-h-11 rounded-xl border border-slate-300 bg-white px-4 font-normal"
+              />
+            </label>
+            <label className="grid gap-2 text-sm font-bold text-slate-700">
+              Payment method
+              <select
+                name="paymentMethod"
+                required
+                className="min-h-11 rounded-xl border border-slate-300 bg-white px-4 font-normal"
+              >
+                <option value="bank_transfer">Bank transfer</option>
+                <option value="cash">Cash</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label className="grid gap-2 text-sm font-bold text-slate-700">
+              Payment date
+              <input
+                type="date"
+                name="paymentDate"
+                max={minimumDate}
+                defaultValue={minimumDate}
+                required
+                className="min-h-11 rounded-xl border border-slate-300 bg-white px-4 font-normal"
+              />
+            </label>
+            <label className="grid gap-2 text-sm font-bold text-slate-700">
+              External reference (optional)
+              <input
+                name="paymentReference"
+                maxLength={120}
+                placeholder="Generated automatically if blank"
+                className="min-h-11 rounded-xl border border-slate-300 bg-white px-4 font-normal"
+              />
+            </label>
+          </div>
+          <label className="mt-4 grid gap-2 text-sm font-bold text-slate-700">
+            Notes (optional)
+            <textarea
+              name="notes"
+              maxLength={1000}
+              className="min-h-20 rounded-xl border border-slate-300 bg-white p-4 font-normal"
+            />
+          </label>
+          <button className="mt-5 min-h-11 rounded-xl bg-emerald-800 px-5 font-bold text-white">
+            Record repayment
+          </button>
+        </form>
+      ) : null}
+
       <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
@@ -169,6 +252,36 @@ export default async function AdminLoanDetails({
           </p>
         </div>
         <ScheduleRows schedule={schedule ?? []} />
+      </section>
+
+      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
+        <h2 className="text-xl font-bold">Repayment transactions</h2>
+        {!repayments?.length ? (
+          <p className="mt-4 text-sm text-slate-600">
+            No repayments recorded yet.
+          </p>
+        ) : (
+          <div className="mt-4 grid gap-3">
+            {repayments.map((payment) => (
+              <div
+                key={payment.id}
+                className="grid gap-2 rounded-xl bg-slate-50 p-4 sm:grid-cols-4 sm:items-center"
+              >
+                <div>
+                  <strong>{payment.payment_reference}</strong>
+                  <p className="text-xs text-slate-500 capitalize">
+                    {payment.payment_method.replaceAll("_", " ")}
+                  </p>
+                </div>
+                <span>{formatDate(payment.payment_date)}</span>
+                <strong>{formatKobo(payment.amount)}</strong>
+                <span className="text-sm text-slate-600">
+                  {payment.notes ?? "—"}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
@@ -208,6 +321,7 @@ function ScheduleRows({
     installment_number: number | null;
     due_date: string | null;
     amount_due: number | null;
+    amount_paid: number | null;
     outstanding_amount: number | null;
     effective_status: string | null;
   }>;
@@ -223,11 +337,18 @@ function ScheduleRows({
       {schedule.map((item) => (
         <div
           key={item.id}
-          className="grid gap-2 rounded-xl border border-slate-100 p-4 sm:grid-cols-4 sm:items-center"
+          className="grid gap-2 rounded-xl border border-slate-100 p-4 sm:grid-cols-5 sm:items-center"
         >
           <strong>Installment {item.installment_number}</strong>
           <span>{formatDate(item.due_date)}</span>
-          <span>{formatKobo(item.amount_due ?? 0)}</span>
+          <span className="text-sm">
+            <span className="block text-slate-500">Due</span>
+            {formatKobo(item.amount_due ?? 0)}
+          </span>
+          <span className="text-sm">
+            <span className="block text-slate-500">Paid</span>
+            {formatKobo(item.amount_paid ?? 0)}
+          </span>
           <span className="font-semibold text-slate-600 capitalize">
             {item.effective_status?.replaceAll("_", " ")}
           </span>

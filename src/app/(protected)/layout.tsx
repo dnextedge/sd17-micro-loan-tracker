@@ -48,6 +48,12 @@ export default async function ProtectedLayout({
                 >
                   Loans
                 </Link>
+                <Link
+                  href="/admin/repayments"
+                  className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  Repayments
+                </Link>
               </>
             ) : (
               <>
@@ -68,6 +74,12 @@ export default async function ProtectedLayout({
                   className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
                 >
                   Loans
+                </Link>
+                <Link
+                  href="/repayments"
+                  className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  Repayments
                 </Link>
                 <Link
                   href="/profile"

@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth";
+import { parseNairaToKobo } from "@/lib/money";
 import { createClient } from "@/lib/supabase/server";
 
 function field(formData: FormData, name: string) {
@@ -81,5 +82,53 @@ export async function disburseLoan(formData: FormData) {
 
   redirect(
     `/admin/loans/${parsed.data.loanId}?message=Loan+disbursed+and+repayment+schedule+generated`,
+  );
+}
+
+const paymentMethod = z.enum(["cash", "bank_transfer", "other"]);
+
+export async function recordRepayment(formData: FormData) {
+  await requireAdmin();
+  const amount = parseNairaToKobo(field(formData, "amount"));
+  const parsed = z
+    .object({
+      loanId: z.string().uuid(),
+      paymentDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      paymentMethod,
+      paymentReference: z.string().trim().max(120),
+      notes: z.string().trim().max(1000),
+    })
+    .safeParse({
+      loanId: field(formData, "loanId"),
+      paymentDate: field(formData, "paymentDate"),
+      paymentMethod: field(formData, "paymentMethod"),
+      paymentReference: field(formData, "paymentReference"),
+      notes: field(formData, "notes"),
+    });
+
+  if (!parsed.success || amount === null || amount <= 0) {
+    redirect("/admin/loans?error=Check+the+repayment+information");
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("record_repayment", {
+    p_amount: amount,
+    p_loan_id: parsed.data.loanId,
+    ...(parsed.data.notes ? { p_notes: parsed.data.notes } : {}),
+    p_payment_date: parsed.data.paymentDate,
+    p_payment_method: parsed.data.paymentMethod,
+    ...(parsed.data.paymentReference
+      ? { p_payment_reference: parsed.data.paymentReference }
+      : {}),
+  });
+
+  if (error) {
+    redirect(
+      `/admin/loans/${parsed.data.loanId}?error=The+repayment+could+not+be+recorded`,
+    );
+  }
+
+  redirect(
+    `/admin/loans/${parsed.data.loanId}?message=Repayment+recorded+and+balance+updated`,
   );
 }

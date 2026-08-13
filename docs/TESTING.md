@@ -15,10 +15,10 @@ npm run build
 
 - Loan total and exact integer interest calculations — implemented
 - Repayment schedule amount generation and final-installment rounding — implemented
-- Outstanding balance calculation
-- Full and partial repayment allocation
-- Overdue detection
-- Negative/zero/overpayment rejection
+- Outstanding balance calculation — implemented
+- Full and partial repayment allocation — implemented
+- Overdue detection — implemented in PostgreSQL
+- Negative/zero/overpayment rejection — implemented
 - Application and loan status transitions
 - Administrator authorization helper
 - Authentication redirect allow-listing
@@ -29,8 +29,10 @@ npm run build
 The pgTAP suites under `supabase/tests` cover schema presence, integer-money
 constraints, allow-listed status transitions, derived overdue state, immutable
 repayments, borrower/application consistency, cross-borrower denial,
-administrator visibility, administrator-only loan creation, idempotency,
-interest totals, disbursement, exact schedule totals, history, and audit data.
+administrator visibility, administrator-only loan creation and repayment
+recording, idempotency, interest totals, disbursement, exact schedule totals,
+partial/cross-installment/full repayment allocation, aggregate balances,
+history, and audit data.
 
 They require the Docker-backed local Supabase runtime. An isolated PostgreSQL 17
 replay may be used as a supplementary syntax and policy smoke test, but it does
@@ -105,5 +107,28 @@ Passed locally:
   borrower RLS visibility.
 - No Next.js error overlay appeared during the browser workflow.
 
-Production QA remains pending until the migration and application deployment
-are completed.
+The Phase 4 migration and application were subsequently deployed to production.
+
+## Phase 5 automated verification — 13 August 2026
+
+Passed locally before deployment:
+
+- Clean Supabase migration replay and database lint with no findings.
+- 76 pgTAP assertions across schema, RLS, application, loan, schedule, and
+  repayment behavior.
+- 26 Vitest assertions, including oldest-first partial allocation, allocation
+  across installments, exact full repayment, and invalid amount rejection.
+- TypeScript strict check and ESLint.
+- The repayment Server Action and React views re-authorize administrators,
+  minimize client-side code, and parallelize independent server reads.
+- Authenticated browser QA against the local synthetic seed: the administrator
+  recorded ₦20,000, the outstanding balance fell from ₦80,000 to ₦60,000,
+  installment 3 became paid, and the immutable transaction remained visible.
+- The borrower dashboard and repayment history reflected ₦60,000 repaid and
+  ₦60,000 outstanding, while direct borrower navigation to the administrator
+  repayment route was denied server-side.
+- No browser console errors or Next.js error overlay appeared during the
+  administrator/borrower workflow.
+
+Production migration, deployment, and production/private-browser QA remain
+pending until this phase passes the hosted rollout gates.

@@ -12,20 +12,26 @@ export default async function LoanDetails({ params }: Props) {
   await requireUser();
   const { id } = await params;
   const supabase = await createClient();
-  const [{ data: loan }, { data: schedule }] = await Promise.all([
-    supabase
-      .from("loans")
-      .select(
-        "*, loan_applications!loans_loan_application_id_fkey(application_number, purpose)",
-      )
-      .eq("id", id)
-      .maybeSingle(),
-    supabase
-      .from("repayment_schedule_effective")
-      .select("*")
-      .eq("loan_id", id)
-      .order("installment_number"),
-  ]);
+  const [{ data: loan }, { data: schedule }, { data: repayments }] =
+    await Promise.all([
+      supabase
+        .from("loans")
+        .select(
+          "*, loan_applications!loans_loan_application_id_fkey(application_number, purpose)",
+        )
+        .eq("id", id)
+        .maybeSingle(),
+      supabase
+        .from("repayment_schedule_effective")
+        .select("*")
+        .eq("loan_id", id)
+        .order("installment_number"),
+      supabase
+        .from("repayments")
+        .select("id, payment_reference, amount, payment_method, payment_date")
+        .eq("loan_id", id)
+        .order("created_at", { ascending: false }),
+    ]);
   if (!loan) notFound();
 
   return (
@@ -91,13 +97,44 @@ export default async function LoanDetails({ params }: Props) {
             {schedule.map((item) => (
               <div
                 key={item.id}
-                className="grid gap-2 rounded-xl border border-slate-100 p-4 sm:grid-cols-4 sm:items-center"
+                className="grid gap-2 rounded-xl border border-slate-100 p-4 sm:grid-cols-5 sm:items-center"
               >
                 <strong>Installment {item.installment_number}</strong>
                 <span>{formatDate(item.due_date)}</span>
-                <span>{formatKobo(item.amount_due ?? 0)}</span>
+                <span className="text-sm">
+                  <span className="block text-slate-500">Due</span>
+                  {formatKobo(item.amount_due ?? 0)}
+                </span>
+                <span className="text-sm">
+                  <span className="block text-slate-500">Paid</span>
+                  {formatKobo(item.amount_paid ?? 0)}
+                </span>
                 <span className="font-semibold text-slate-600 capitalize">
                   {item.effective_status?.replaceAll("_", " ")}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
+        <h2 className="text-xl font-bold">Repayment history</h2>
+        {!repayments?.length ? (
+          <p className="mt-4 text-sm text-slate-600">
+            No repayments recorded yet.
+          </p>
+        ) : (
+          <div className="mt-4 grid gap-3">
+            {repayments.map((payment) => (
+              <div
+                key={payment.id}
+                className="grid gap-2 rounded-xl bg-slate-50 p-4 sm:grid-cols-4"
+              >
+                <strong>{payment.payment_reference}</strong>
+                <span>{formatDate(payment.payment_date)}</span>
+                <strong>{formatKobo(payment.amount)}</strong>
+                <span className="text-sm text-slate-600 capitalize">
+                  {payment.payment_method.replaceAll("_", " ")}
                 </span>
               </div>
             ))}

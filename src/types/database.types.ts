@@ -525,6 +525,17 @@ export type Database = {
         Args: { p_first_repayment_date: string; p_loan_id: string };
         Returns: undefined;
       };
+      record_repayment: {
+        Args: {
+          p_amount: number;
+          p_loan_id: string;
+          p_notes?: string;
+          p_payment_date?: string;
+          p_payment_method: Database["public"]["Enums"]["payment_method"];
+          p_payment_reference?: string;
+        };
+        Returns: string;
+      };
       review_loan_application: {
         Args: {
           p_admin_notes?: string;
