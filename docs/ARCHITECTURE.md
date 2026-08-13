@@ -27,6 +27,9 @@ LoanTrack NG records
 
 - Server Components perform authenticated reads without an internal HTTP round trip.
 - Server Actions handle internal form mutations.
+- Loan creation and disbursement Server Actions remain thin: they re-authorize
+  the administrator and delegate the financial transaction to restricted
+  PostgreSQL RPCs.
 - Route Handlers are reserved for auth callbacks and genuine HTTP integrations.
 - Node.js is the default runtime.
 - Production builds use Next.js's supported webpack builder because Turbopack's CSS worker cannot bind its internal port in the managed Codex environment. Development can continue to use the default Next.js dev bundler.
@@ -34,6 +37,11 @@ LoanTrack NG records
   unauthenticated protected-route requests. Server layouts verify the user
   again, administrator pages query the protected `user_roles` table, and RLS
   remains the final authorization boundary.
+
+Administrator and borrower navigation are role-specific. Administrator routes
+use `/admin/applications` and `/admin/loans`; borrower reads use `/applications`
+and `/loans`, with PostgreSQL RLS applying ownership at both list and detail
+levels.
 
 ## Trust boundaries
 

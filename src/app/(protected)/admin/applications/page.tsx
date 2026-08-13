@@ -58,7 +58,7 @@ export default async function AdminApplicationsPage({ searchParams }: Props) {
           defaultValue={status}
           className="min-h-11 rounded-xl border border-slate-300 px-4"
         >
-          <option value="">All statuses</option>
+          <option value="">All application statuses</option>
           {Object.entries(APPLICATION_STATUS_LABELS).map(([value, label]) => (
             <option key={value} value={value}>
               {label}
@@ -66,7 +66,7 @@ export default async function AdminApplicationsPage({ searchParams }: Props) {
           ))}
         </select>
         <button className="min-h-11 rounded-xl bg-slate-900 px-5 font-bold text-white">
-          Filter
+          Filter applications
         </button>
       </form>
       <div className="mt-6 grid gap-4">

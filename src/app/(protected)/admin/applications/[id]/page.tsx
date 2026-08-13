@@ -8,6 +8,7 @@ import {
 import { formatKobo } from "@/lib/money";
 import { createClient } from "@/lib/supabase/server";
 import { reviewLoanApplication } from "@/app/(protected)/applications/actions";
+import { createLoanFromApplication } from "@/app/(protected)/loans/actions";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -24,13 +25,20 @@ export default async function AdminApplicationDetails({
     searchParams,
   ]);
   const supabase = await createClient();
-  const { data: application } = await supabase
-    .from("loan_applications")
-    .select(
-      "*, profiles!loan_applications_borrower_id_fkey(full_name, phone, email, state, occupation, employment_type)",
-    )
-    .eq("id", id)
-    .maybeSingle();
+  const [{ data: application }, { data: existingLoan }] = await Promise.all([
+    supabase
+      .from("loan_applications")
+      .select(
+        "*, profiles!loan_applications_borrower_id_fkey(full_name, phone, email, state, occupation, employment_type)",
+      )
+      .eq("id", id)
+      .maybeSingle(),
+    supabase
+      .from("loans")
+      .select("id, loan_number, status")
+      .eq("loan_application_id", id)
+      .maybeSingle(),
+  ]);
   if (!application) notFound();
 
   const allowed =
@@ -125,6 +133,54 @@ export default async function AdminApplicationDetails({
             ))}
           </div>
         </form>
+      ) : null}
+      {application.status === "approved" ? (
+        <section className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-6">
+          <h2 className="text-lg font-bold text-slate-950">
+            Approved application
+          </h2>
+          {existingLoan ? (
+            <div>
+              <p className="mt-2 text-sm text-slate-600">
+                Loan {existingLoan.loan_number} has already been created.
+              </p>
+              <Link
+                href={`/admin/loans/${existingLoan.id}`}
+                className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-emerald-800 px-5 font-bold text-white"
+              >
+                Open loan
+              </Link>
+            </div>
+          ) : (
+            <form action={createLoanFromApplication} className="mt-4">
+              <input
+                type="hidden"
+                name="applicationId"
+                value={application.id}
+              />
+              <p className="text-sm leading-6 text-slate-600">
+                Create the separate loan record using integer-kobo calculations.
+                The default demonstration interest rate is 0%.
+              </p>
+              <label className="mt-4 grid max-w-xs gap-2 text-sm font-bold text-slate-700">
+                Interest rate (%)
+                <input
+                  type="number"
+                  name="interestRate"
+                  defaultValue="0"
+                  min="0"
+                  max="100"
+                  step="0.01"
+                  required
+                  className="min-h-11 rounded-xl border border-slate-300 bg-white px-4 font-normal"
+                />
+              </label>
+              <button className="mt-5 min-h-11 rounded-xl bg-emerald-800 px-5 font-bold text-white">
+                Create approved loan
+              </button>
+            </form>
+          )}
+        </section>
       ) : null}
     </div>
   );

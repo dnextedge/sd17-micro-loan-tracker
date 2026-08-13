@@ -39,6 +39,7 @@ origins.
 - Borrower profile updates use column-level grants, including only the structured name and minimal contact/work fields; RLS restricts the row to the authenticated owner.
 - Sensitive updates are unavailable as broad table grants and instead use restricted functions.
 - Loan application submission and review use security-definer functions with fixed empty search paths, explicit authentication/role checks, row locking, and allow-listed transitions.
+- Loan creation and disbursement use administrator-only security-definer functions with fixed empty search paths, row locks, idempotency controls, and atomic history/audit writes; authenticated users retain no direct loan or schedule mutation grants.
 - Administrators are identified by a database-verified helper with fixed `search_path` and minimal grants.
 - Cross-borrower and borrower-to-admin denial is covered by pgTAP suites using authenticated JWT claims.
 
@@ -55,7 +56,11 @@ authenticated table grants, and signup metadata is never trusted for roles.
 
 ## Financial integrity
 
-Positive-amount constraints, exact minor-unit arithmetic, valid-transition functions, immutable repayment rows, row locks, and atomic transactions protect balances and lifecycle state.
+Positive-amount constraints, exact minor-unit arithmetic, valid-transition
+functions, immutable repayment rows, row locks, unique application-to-loan and
+loan-to-installment constraints, and atomic transactions protect balances and
+lifecycle state. Schedule rows must sum to the loan total; any division
+remainder is isolated in the final installment.
 
 ## Data minimization
 

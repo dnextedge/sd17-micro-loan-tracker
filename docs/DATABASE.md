@@ -4,7 +4,10 @@
 
 Money is stored as PostgreSQL `BIGINT` minor units (kobo). For example, ₦120,000 is stored as `12000000`. JavaScript floating-point arithmetic is forbidden for financial calculations.
 
-Interest rates use an exact PostgreSQL `NUMERIC` value. Schedule generation rounds deterministically and assigns any remainder to the final installment so installments sum exactly to total repayable.
+Interest rates use an exact PostgreSQL `NUMERIC` value. Interest is rounded to
+the nearest kobo in PostgreSQL. The regular monthly installment is rounded up,
+and the final installment is adjusted so the schedule always sums exactly to
+total repayable.
 
 ## Core tables
 
@@ -45,13 +48,21 @@ requires a database-verified administrator; the existing transition trigger
 rejects invalid lifecycle moves. Both paths write audit/status history in the
 same transaction.
 
+Approved application conversion and disbursement also use restricted
+PostgreSQL functions. `create_loan_from_application` locks the application,
+requires its approved state, prevents duplicates through locking and the unique
+application relationship, calculates all amounts, and records initial history
+and audit data. `disburse_loan` locks the loan, records its disbursement, and
+creates every monthly installment in the same transaction. Repeated successful
+requests are idempotent and cannot generate duplicate loans or schedules.
+
 ## Transaction rules
 
 Application and loan transitions are allow-listed in PostgreSQL. Repayment
-rows, lifecycle history, and audit rows are append-only. Approval,
-disbursement, schedule generation, and repayment allocation functions will be
-added with their application workflows; allocation will lock the loan, insert
-a transaction, allocate oldest outstanding installments, recalculate
+rows, lifecycle history, and audit rows are append-only. Loan creation,
+disbursement, and schedule generation are atomic and database-authorized.
+Repayment allocation is the next workflow phase; it will lock the loan, insert
+an immutable transaction, allocate oldest outstanding installments, recalculate
 aggregates, and record history in one transaction.
 
 ## Demonstration data

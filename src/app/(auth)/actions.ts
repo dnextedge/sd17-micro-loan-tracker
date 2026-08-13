@@ -36,13 +36,19 @@ export async function login(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
     authRedirect("/login", "error", "The email or password is incorrect.");
   }
 
-  redirect("/dashboard");
+  const { data: roleRecord } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", data.user.id)
+    .maybeSingle();
+
+  redirect(roleRecord?.role === "admin" ? "/admin" : "/dashboard");
 }
 
 export async function register(formData: FormData) {

@@ -11,10 +11,10 @@ npm run db:test
 npm run build
 ```
 
-## Planned unit coverage
+## Unit coverage
 
-- Loan total and exact interest calculations
-- Repayment schedule generation and final-installment rounding
+- Loan total and exact integer interest calculations — implemented
+- Repayment schedule amount generation and final-installment rounding — implemented
 - Outstanding balance calculation
 - Full and partial repayment allocation
 - Overdue detection
@@ -28,8 +28,9 @@ npm run build
 
 The pgTAP suites under `supabase/tests` cover schema presence, integer-money
 constraints, allow-listed status transitions, derived overdue state, immutable
-repayments, borrower/application consistency, cross-borrower denial, and
-administrator visibility.
+repayments, borrower/application consistency, cross-borrower denial,
+administrator visibility, administrator-only loan creation, idempotency,
+interest totals, disbursement, exact schedule totals, history, and audit data.
 
 They require the Docker-backed local Supabase runtime. An isolated PostgreSQL 17
 replay may be used as a supplementary syntax and policy smoke test, but it does
@@ -86,3 +87,23 @@ Not yet verified:
   this record because they motivated the browser-only recovery design.
 - Production/incognito authentication must be checked after the reviewed branch
   is merged and deployed to the production alias.
+
+## Phase 4 automated verification — 13 August 2026
+
+Passed locally:
+
+- Clean Supabase migration replay and seed.
+- Database lint with no schema findings.
+- 53 pgTAP assertions across schema, RLS, application, loan creation,
+  disbursement, schedule, history, and audit behavior.
+- 22 Vitest assertions, including zero/percentage interest and exact final
+  installment rounding.
+- TypeScript strict check and ESLint.
+- Authenticated browser smoke test with synthetic accounts: administrator
+  post-login routing, role-specific navigation, approved loan creation,
+  disbursement, six-installment schedule rendering, lifecycle history, and
+  borrower RLS visibility.
+- No Next.js error overlay appeared during the browser workflow.
+
+Production QA remains pending until the migration and application deployment
+are completed.

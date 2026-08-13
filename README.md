@@ -4,10 +4,11 @@ Digital Micro-Loan Request & Repayment Tracking.
 
 LoanTrack NG is a 3MTT capstone project that will replace paper forms, notebooks, and disconnected spreadsheets with a focused workflow for requesting, reviewing, disbursing, and tracking micro-loans. It is a tracking and management system, not a licensed lender.
 
-> Development status: Phases 1 and 2 complete; Phase 3 authentication and
-> borrower-profile implementation is in progress. Automated checks and the
-> production build pass, but hosted Supabase credentials and end-to-end Auth
-> QA are still pending.
+> Development status: Authentication, borrower profiles, application
+> submission/review, and production role authorization are complete. Loan
+> creation, disbursement, and schedule generation are implemented and locally
+> verified; production migration/deployment QA is pending. Repayment recording
+> remains the next MVP phase.
 
 ## 3MTT Project Information
 
@@ -28,7 +29,7 @@ LoanTrack NG will provide two simple role-based experiences:
 
 ## Key Features
 
-The submission MVP is planned to include:
+The submission MVP includes or is implementing:
 
 - Supabase authentication and password recovery
 - Borrower profiles and loan applications
@@ -66,8 +67,8 @@ immutable repayment transactions. See [docs/DATABASE.md](docs/DATABASE.md).
 - Secrets are excluded from Git.
 - The service-role key must never use a `NEXT_PUBLIC_` prefix.
 - Borrower/admin record visibility is enforced in PostgreSQL RLS.
-- Sensitive financial and lifecycle operations will be transactional database functions.
-- Roles will not be accepted from client-controlled signup metadata.
+- Sensitive financial and lifecycle operations use transactional database functions.
+- Roles are never accepted from client-controlled signup metadata.
 
 See [docs/SECURITY.md](docs/SECURITY.md).
 
@@ -131,11 +132,11 @@ npm run db:test
 npm run build
 ```
 
-See [docs/TESTING.md](docs/TESTING.md) for the planned business-logic, RLS, integration, and manual QA suites.
+See [docs/TESTING.md](docs/TESTING.md) for business-logic, RLS, integration, and manual QA suites.
 
 ## Deployment
 
-The Phase 1 foundation is deployed at [sd17-micro-loan-tracker.vercel.app](https://sd17-micro-loan-tracker.vercel.app). Vercel hosts the Next.js application, and Supabase is the planned managed database/authentication provider. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+The application is deployed at [sd17-micro-loan-tracker.vercel.app](https://sd17-micro-loan-tracker.vercel.app). Vercel hosts the Next.js application, and Supabase provides the managed PostgreSQL database and authentication. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Demo Credentials
 
@@ -156,8 +157,8 @@ The table reports the current repository state, not the intended final state.
 
 | Requirement  | Implementation                        | Current status                     |
 | ------------ | ------------------------------------- | ---------------------------------- |
-| Loan Request | Next.js/Supabase workflow             | Planned                            |
-| Loan Status  | Application and loan lifecycle        | Planned                            |
+| Loan Request | Next.js/Supabase workflow             | Implemented and production tested  |
+| Loan Status  | Application and loan lifecycle        | Loan phase implemented locally     |
 | Repayments   | Immutable transactions and allocation | Planned                            |
 | Deployment   | Vercel                                | Foundation deployed                |
 | HTML         | HTML5                                 | Foundation complete                |

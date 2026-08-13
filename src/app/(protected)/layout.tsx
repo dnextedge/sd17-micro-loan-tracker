@@ -9,13 +9,14 @@ export default async function ProtectedLayout({
   children: ReactNode;
 }) {
   const [, role] = await Promise.all([requireUser(), getCurrentRole()]);
+  const dashboardHref = role === "admin" ? "/admin" : "/dashboard";
 
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex min-h-18 max-w-7xl items-center justify-between gap-5 px-5 sm:px-8">
+        <div className="mx-auto flex min-h-18 max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-3 sm:flex-nowrap sm:gap-5 sm:px-8">
           <Link
-            href="/dashboard"
+            href={dashboardHref}
             className="flex items-center gap-3 font-bold text-slate-950"
           >
             <span className="grid size-10 place-items-center rounded-xl bg-emerald-800 text-xs text-white">
@@ -25,42 +26,57 @@ export default async function ProtectedLayout({
           </Link>
           <nav
             aria-label="Account navigation"
-            className="flex items-center gap-2 sm:gap-4"
+            className="order-3 flex w-full items-center gap-1 overflow-x-auto pb-1 sm:order-none sm:w-auto sm:gap-4 sm:pb-0"
           >
-            <Link
-              href="/dashboard"
-              className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/applications"
-              className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
-            >
-              Applications
-            </Link>
-            <Link
-              href="/profile"
-              className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
-            >
-              Profile
-            </Link>
             {role === "admin" ? (
               <>
                 <Link
                   href="/admin"
-                  className="rounded-lg px-3 py-2 text-sm font-semibold text-emerald-800 hover:bg-emerald-50"
+                  className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
                 >
-                  Admin
+                  Dashboard
                 </Link>
                 <Link
                   href="/admin/applications"
-                  className="hidden rounded-lg px-3 py-2 text-sm font-semibold text-emerald-800 hover:bg-emerald-50 md:inline"
+                  className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
                 >
-                  Review
+                  Applications
+                </Link>
+                <Link
+                  href="/admin/loans"
+                  className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  Loans
                 </Link>
               </>
-            ) : null}
+            ) : (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  href="/applications"
+                  className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  Applications
+                </Link>
+                <Link
+                  href="/loans"
+                  className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  Loans
+                </Link>
+                <Link
+                  href="/profile"
+                  className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  Profile
+                </Link>
+              </>
+            )}
             <form action={logout}>
               <button
                 type="submit"
