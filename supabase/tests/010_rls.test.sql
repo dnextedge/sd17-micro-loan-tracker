@@ -3,7 +3,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(9);
+select plan(10);
 
 insert into public.loan_applications (
   id,
@@ -48,7 +48,7 @@ select is(
   1,
   'borrower can read only own profile'
 );
-select lives_ok(
+select throws_ok(
   $$
     insert into public.loan_applications (
       borrower_id,
@@ -61,26 +61,31 @@ select lives_ok(
     from public.profiles
     where user_id = '10000000-0000-4000-8000-000000000001'
   $$,
-  'borrower can create own draft application'
-);
-select throws_ok(
-  $$
-    insert into public.loan_applications (
-      borrower_id,
-      requested_amount,
-      purpose,
-      repayment_duration_months
-    )
-    values (
-      '11000000-0000-4000-8000-000000000002',
-      2500000,
-      'Attempt to create another borrower application',
-      3
-    )
-  $$,
   '42501',
   null,
-  'borrower cannot create an application for another profile'
+  'borrower cannot bypass the restricted submission function'
+);
+select lives_ok(
+  $$
+    select public.submit_loan_application(
+      2500000,
+      'Restock household goods for retail shop',
+      3::smallint,
+      null,
+      'Restricted submission function test'
+    )
+  $$,
+  'completed borrower can submit through the restricted function'
+);
+select is(
+  (
+    select count(*)::integer
+    from public.loan_applications
+    where purpose = 'Restock household goods for retail shop'
+      and status = 'submitted'
+  ),
+  1,
+  'restricted submission creates a visible submitted application for its caller'
 );
 select is(
   (select count(*)::integer from public.audit_logs),
