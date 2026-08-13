@@ -91,7 +91,7 @@ export default function Home() {
                   Project status
                 </p>
                 <p className="mt-1 text-2xl font-bold text-slate-950">
-                  Secure access ready
+                  Submission MVP deployed
                 </p>
               </div>
               <div className="grid size-12 place-items-center rounded-full bg-emerald-100 text-xl text-emerald-800">
@@ -107,7 +107,7 @@ export default function Home() {
                 ["Project", "SD-17 — Micro-Loan Tracker"],
                 ["Stack", "Next.js · Supabase · PostgreSQL"],
                 ["Currency", "Nigerian Naira (NGN)"],
-                ["Current phase", "Authentication & profiles"],
+                ["Current phase", "Final QA & submission"],
               ].map(([term, detail]) => (
                 <div
                   key={term}
