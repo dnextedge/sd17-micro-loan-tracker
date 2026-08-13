@@ -519,7 +519,7 @@ export type Database = {
     Functions: {
       review_loan_application: {
         Args: {
-          p_admin_notes?: string | null;
+          p_admin_notes?: string;
           p_application_id: string;
           p_new_status: Database["public"]["Enums"]["application_status"];
         };
@@ -527,8 +527,8 @@ export type Database = {
       };
       submit_loan_application: {
         Args: {
-          p_borrower_notes?: string | null;
-          p_preferred_start_date?: string | null;
+          p_borrower_notes?: string;
+          p_preferred_start_date?: string;
           p_purpose: string;
           p_repayment_duration_months: number;
           p_requested_amount: number;

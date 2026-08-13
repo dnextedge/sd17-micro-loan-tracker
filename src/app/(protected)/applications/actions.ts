@@ -45,8 +45,12 @@ export async function submitLoanApplication(formData: FormData) {
 
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("submit_loan_application", {
-    p_borrower_notes: parsed.data.borrowerNotes,
-    p_preferred_start_date: parsed.data.preferredStartDate,
+    ...(parsed.data.borrowerNotes
+      ? { p_borrower_notes: parsed.data.borrowerNotes }
+      : {}),
+    ...(parsed.data.preferredStartDate
+      ? { p_preferred_start_date: parsed.data.preferredStartDate }
+      : {}),
     p_purpose: parsed.data.purpose,
     p_repayment_duration_months: parsed.data.repaymentDurationMonths,
     p_requested_amount: amount,
@@ -88,7 +92,9 @@ export async function reviewLoanApplication(formData: FormData) {
 
   const supabase = await createClient();
   const { error } = await supabase.rpc("review_loan_application", {
-    p_admin_notes: parsed.data.adminNotes,
+    ...(parsed.data.adminNotes
+      ? { p_admin_notes: parsed.data.adminNotes }
+      : {}),
     p_application_id: parsed.data.applicationId,
     p_new_status: parsed.data.status,
   });
