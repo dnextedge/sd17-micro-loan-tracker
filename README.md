@@ -162,7 +162,7 @@ The table reports the current repository state, not the intended final state.
 | Loan Request | Next.js/Supabase workflow             | Implemented and production tested  |
 | Loan Status  | Application and loan lifecycle        | Implemented and deployed           |
 | Repayments   | Immutable transactions and allocation | Implemented and deployed           |
-| Deployment   | Vercel                                | Foundation deployed                |
+| Deployment   | Vercel                                | Phase 6 deployed                   |
 | HTML         | HTML5                                 | Foundation complete                |
 | CSS          | CSS3/Tailwind CSS                     | Foundation complete                |
 | JavaScript   | JavaScript/TypeScript                 | Foundation complete                |

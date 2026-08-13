@@ -7,7 +7,7 @@ This checklist is updated as functionality is verified. “Planned” does not m
 | Loan Request | Borrower application workflow    | Implemented; production QA passed  |
 | Loan Status  | Lifecycle and history            | Implemented and deployed           |
 | Repayments   | Immutable transaction allocation | Implemented and deployed           |
-| Deployment   | Vercel                           | Phase 5 deployed; full QA pending  |
+| Deployment   | Vercel                           | Phase 6 deployed; full QA pending  |
 | HTML         | Next.js semantic HTML5           | Foundation complete                |
 | CSS          | CSS3 and Tailwind CSS            | Foundation complete                |
 | JavaScript   | TypeScript/JavaScript            | Foundation complete                |

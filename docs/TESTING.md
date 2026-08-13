@@ -169,5 +169,15 @@ Passed locally before deployment:
 - No browser console errors appeared. The local database was reset afterward,
   restoring the documented ₦40,000-repaid synthetic seed state.
 
-Hosted rollout is recorded after it runs and must not be inferred from these
-local results.
+Hosted rollout passed:
+
+- Production Supabase migration `20260813143000` is recorded in remote
+  migration history.
+- Vercel deployment `dpl_C9gfgosgLD65t9krdvXt3rvypG9t` reached `READY`, is
+  associated with commit `24950d1`, and owns the public production alias.
+- Production `/login` returned HTTP 200; anonymous `/dashboard` and
+  `/admin/reports` returned the expected 307 sign-in redirect.
+- Vercel reported no runtime errors during the post-deployment verification
+  window.
+
+Authenticated production/private-browser QA remains a Phase 7 release gate.
