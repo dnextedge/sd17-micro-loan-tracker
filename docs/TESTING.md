@@ -130,5 +130,16 @@ Passed locally before deployment:
 - No browser console errors or Next.js error overlay appeared during the
   administrator/borrower workflow.
 
-Production migration, deployment, and production/private-browser QA remain
-pending until this phase passes the hosted rollout gates.
+Hosted rollout passed:
+
+- Migration `20260813120000` is recorded in the linked production Supabase
+  migration history.
+- Vercel production deployment `dpl_4YtR21nTjtwdpmQhiFvYSRMexBXz` reached
+  `READY` and owns the public production aliases.
+- Production `/login` returned HTTP 200 and anonymous `/dashboard` returned the
+  expected 307 sign-in redirect.
+- Vercel reported no runtime error logs for the new deployment, and both GitHub
+  CI jobs passed for commit `2064561`.
+
+Authenticated production/private-browser QA remains a release gate because no
+production password was stored in the repository or automation environment.

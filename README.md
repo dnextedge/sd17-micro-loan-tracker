@@ -7,8 +7,9 @@ LoanTrack NG is a 3MTT capstone project that will replace paper forms, notebooks
 > Development status: Authentication, borrower profiles, application
 > submission/review, and production role authorization are complete. Loan
 > creation, disbursement, schedule generation, repayment recording, allocation,
-> and portfolio dashboards are implemented and locally verified; production
-> migration/deployment QA for the repayment phase is pending.
+> and portfolio dashboards are implemented, verified, and deployed. Public
+> production checks pass; authenticated private-browser QA remains a release
+> gate before the submission tag.
 
 ## 3MTT Project Information
 
@@ -158,8 +159,8 @@ The table reports the current repository state, not the intended final state.
 | Requirement  | Implementation                        | Current status                     |
 | ------------ | ------------------------------------- | ---------------------------------- |
 | Loan Request | Next.js/Supabase workflow             | Implemented and production tested  |
-| Loan Status  | Application and loan lifecycle        | Implemented; production QA pending |
-| Repayments   | Immutable transactions and allocation | Implemented; production QA pending |
+| Loan Status  | Application and loan lifecycle        | Implemented and deployed           |
+| Repayments   | Immutable transactions and allocation | Implemented and deployed           |
 | Deployment   | Vercel                                | Foundation deployed                |
 | HTML         | HTML5                                 | Foundation complete                |
 | CSS          | CSS3/Tailwind CSS                     | Foundation complete                |
