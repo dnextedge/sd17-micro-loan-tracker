@@ -4,9 +4,9 @@ Digital Micro-Loan Request & Repayment Tracking.
 
 LoanTrack NG is a 3MTT capstone project that will replace paper forms, notebooks, and disconnected spreadsheets with a focused workflow for requesting, reviewing, disbursing, and tracking micro-loans. It is a tracking and management system, not a licensed lender.
 
-> Development status: The complete submission MVP is implemented, tested, and
-> deployed. Phase 7 application and private-browser verification pass. The final
-> demo-video link remains the only release gate before the submission tag.
+> Development status: The complete submission MVP is implemented, tested,
+> deployed, and documented. Phase 7 application, private-browser, and demo-video
+> verification pass. Submission release: `v1.0.0-3mtt-submission`.
 
 ## 3MTT Project Information
 
@@ -159,6 +159,10 @@ See [docs/TESTING.md](docs/TESTING.md) for business-logic, RLS, integration, and
 
 The application is deployed at [sd17-micro-loan-tracker.vercel.app](https://sd17-micro-loan-tracker.vercel.app). Vercel hosts the Next.js application, and Supabase provides the managed PostgreSQL database and authentication. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
+## Demo Video
+
+Watch the [LoanTrack NG SD-17 demonstration video](https://drive.google.com/file/d/1IUH7fUvgKrs13w9ZgqkFySzgPtVsVUpa/view?usp=sharing).
+
 ## Demo Credentials
 
 The local-only synthetic seed creates these accounts:
@@ -191,7 +195,7 @@ The table reports the current repository state, not the intended final state.
 | Database     | PostgreSQL/Supabase                   | Schema/RLS verified in Supabase CI |
 | Source Code  | GitHub                                | Published                          |
 | README       | Included                              | Foundation complete                |
-| Demo Video   | Link added before submission          | Pending MVP                        |
+| Demo Video   | Google Drive demonstration            | Published and assessor-accessible  |
 
 See [docs/SD17_COMPLIANCE.md](docs/SD17_COMPLIANCE.md) for the acceptance checklist.
 

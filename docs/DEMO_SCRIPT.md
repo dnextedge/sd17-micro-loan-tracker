@@ -4,6 +4,8 @@ Production: `https://sd17-micro-loan-tracker.vercel.app`
 
 Source: `https://github.com/dnextedge/sd17-micro-loan-tracker`
 
+Published video: `https://drive.google.com/file/d/1IUH7fUvgKrs13w9ZgqkFySzgPtVsVUpa/view?usp=sharing`
+
 ## Target sequence
 
 1. **0:00–0:12:** Introduce the paper/notebook/spreadsheet tracking problem.
@@ -37,4 +39,5 @@ Source: `https://github.com/dnextedge/sd17-micro-loan-tracker`
 - Keep the deployed Vercel hostname visible at least once.
 - Avoid showing passwords, inbox content, Supabase keys, or browser extensions.
 - Keep the final edit between two and three minutes.
-- Add the published video URL to README and the compliance table before tagging.
+- Confirm the published video remains accessible to anyone with the link before
+  submission.

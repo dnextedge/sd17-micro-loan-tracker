@@ -61,5 +61,6 @@ Production deployment. Production continues to use `NEXT_PUBLIC_APP_URL`.
 6. Tag the verified commit `v1.0.0-3mtt-submission`.
 
 The complete application and hosted schema are deployed. Automated release
-gates and public, authenticated, private-browser, and mobile QA pass. The final
-video link and submission tag remain release gates.
+gates and public, authenticated, private-browser, and mobile QA pass. The demo
+video is published and assessor-accessible. Submission release target:
+`v1.0.0-3mtt-submission`.
