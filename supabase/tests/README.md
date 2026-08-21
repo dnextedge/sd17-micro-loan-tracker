@@ -11,5 +11,14 @@ npm run db:test
   transitions, overdue derivation, immutable repayments, and borrower consistency.
 - `010_rls.test.sql` exercises borrower ownership boundaries and administrator
   visibility using authenticated JWT claims.
+- `020_loan_workflow.test.sql` covers administrator-only loan creation,
+  idempotency, exact interest and installment totals, disbursement, schedule
+  generation, history, audit records, and borrower visibility.
+- `030_repayment_workflow.test.sql` covers administrator-only recording,
+  negative and excessive payment rejection, partial and cross-installment
+  allocation, aggregate balances, full repayment, immutable transaction
+  preservation, audit data, and borrower visibility.
+- `040_loan_completion.test.sql` covers administrator-only final completion,
+  unpaid-loan rejection, status history, audit data, and idempotency.
 
 All fixtures are synthetic and every suite runs inside a rolled-back transaction.

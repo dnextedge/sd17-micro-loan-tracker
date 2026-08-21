@@ -274,8 +274,11 @@ export type Database = {
           created_at: string;
           email: string | null;
           employment_type: string | null;
+          first_name: string | null;
           full_name: string | null;
           id: string;
+          last_name: string | null;
+          middle_name: string | null;
           occupation: string | null;
           phone: string | null;
           profile_completed_at: string | null;
@@ -289,8 +292,11 @@ export type Database = {
           created_at?: string;
           email?: string | null;
           employment_type?: string | null;
+          first_name?: string | null;
           full_name?: string | null;
           id?: string;
+          last_name?: string | null;
+          middle_name?: string | null;
           occupation?: string | null;
           phone?: string | null;
           profile_completed_at?: string | null;
@@ -304,8 +310,11 @@ export type Database = {
           created_at?: string;
           email?: string | null;
           employment_type?: string | null;
+          first_name?: string | null;
           full_name?: string | null;
           id?: string;
+          last_name?: string | null;
+          middle_name?: string | null;
           occupation?: string | null;
           phone?: string | null;
           profile_completed_at?: string | null;
@@ -508,7 +517,47 @@ export type Database = {
       };
     };
     Functions: {
-      [_ in never]: never;
+      complete_loan: {
+        Args: { p_loan_id: string; p_notes?: string };
+        Returns: undefined;
+      };
+      create_loan_from_application: {
+        Args: { p_application_id: string; p_interest_rate?: number };
+        Returns: string;
+      };
+      disburse_loan: {
+        Args: { p_first_repayment_date: string; p_loan_id: string };
+        Returns: undefined;
+      };
+      record_repayment: {
+        Args: {
+          p_amount: number;
+          p_loan_id: string;
+          p_notes?: string;
+          p_payment_date?: string;
+          p_payment_method: Database["public"]["Enums"]["payment_method"];
+          p_payment_reference?: string;
+        };
+        Returns: string;
+      };
+      review_loan_application: {
+        Args: {
+          p_admin_notes?: string;
+          p_application_id: string;
+          p_new_status: Database["public"]["Enums"]["application_status"];
+        };
+        Returns: undefined;
+      };
+      submit_loan_application: {
+        Args: {
+          p_borrower_notes?: string;
+          p_preferred_start_date?: string;
+          p_purpose: string;
+          p_repayment_duration_months: number;
+          p_requested_amount: number;
+        };
+        Returns: string;
+      };
     };
     Enums: {
       app_role: "borrower" | "admin";

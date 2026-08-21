@@ -4,7 +4,10 @@
 
 Money is stored as PostgreSQL `BIGINT` minor units (kobo). For example, ₦120,000 is stored as `12000000`. JavaScript floating-point arithmetic is forbidden for financial calculations.
 
-Interest rates use an exact PostgreSQL `NUMERIC` value. Schedule generation rounds deterministically and assigns any remainder to the final installment so installments sum exactly to total repayable.
+Interest rates use an exact PostgreSQL `NUMERIC` value. Interest is rounded to
+the nearest kobo in PostgreSQL. The regular monthly installment is rounded up,
+and the final installment is adjusted so the schedule always sums exactly to
+total repayable.
 
 ## Core tables
 
@@ -24,20 +27,52 @@ UUID primary keys, `timestamptz`, foreign keys, checks, unique human-readable
 numbers, and query-specific indexes are defined in
 `supabase/migrations/20260810160000_initial_schema.sql`.
 
+Borrower names are stored as structured `first_name`, optional `middle_name`,
+and `last_name` values. The existing `full_name` column remains the derived
+display/search value for compatibility. Profile mutations allow-list all 36
+Nigerian states plus the Federal Capital Territory and a concise set of MVP
+employment categories; the database repeats those constraints as defence in
+depth.
+
 Application and loan states use PostgreSQL enums and allow-listed transition
 functions. A composite foreign key prevents a loan from being attached to an
 application belonging to another borrower. The
 `repayment_schedule_effective` security-invoker view derives overdue status
 when an unpaid installment is past its due date.
 
+Loan application submission and officer review use restricted PostgreSQL
+functions instead of direct table mutation grants. Submission verifies the
+authenticated borrower owns a completed profile and validates integer-kobo
+amounts, duration, dates, and text limits. Review locks the application and
+requires a database-verified administrator; the existing transition trigger
+rejects invalid lifecycle moves. Both paths write audit/status history in the
+same transaction.
+
+Approved application conversion and disbursement also use restricted
+PostgreSQL functions. `create_loan_from_application` locks the application,
+requires its approved state, prevents duplicates through locking and the unique
+application relationship, calculates all amounts, and records initial history
+and audit data. `disburse_loan` locks the loan, records its disbursement, and
+creates every monthly installment in the same transaction. Repeated successful
+requests are idempotent and cannot generate duplicate loans or schedules.
+
 ## Transaction rules
 
 Application and loan transitions are allow-listed in PostgreSQL. Repayment
-rows, lifecycle history, and audit rows are append-only. Approval,
-disbursement, schedule generation, and repayment allocation functions will be
-added with their application workflows; allocation will lock the loan, insert
-a transaction, allocate oldest outstanding installments, recalculate
-aggregates, and record history in one transaction.
+rows, lifecycle history, and audit rows are append-only. Loan creation,
+disbursement, schedule generation, and repayment recording are atomic and
+database-authorized. `record_repayment` locks the loan and its unpaid schedules,
+rejects invalid or excessive amounts, inserts one immutable transaction,
+allocates oldest outstanding installments first, recalculates loan aggregates,
+and records audit/lifecycle history in the same transaction. A zero balance
+changes the loan to `fully_repaid`; an unpaid past-due installment changes it
+to `overdue`.
+
+Final administrative closure uses the restricted `complete_loan` function. It
+locks the loan, requires the `fully_repaid` state, verifies a zero outstanding
+balance and a completely paid schedule, and then records the `completed`
+transition and audit event atomically. Repeated completion requests are
+idempotent.
 
 ## Demonstration data
 
