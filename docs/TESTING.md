@@ -209,7 +209,5 @@ Passed:
 - A fresh in-app browser session reached the protected production `/dashboard`
   after sign-in. The user confirmed the authenticated dashboard was visible;
   direct automated inspection was restricted by the browser security policy.
-
-Pending release gates:
-
-- Published 2–3 minute video URL.
+- The published Google Drive demonstration video was verified as a shared
+  QuickTime file with an `anyone: reader` permission.

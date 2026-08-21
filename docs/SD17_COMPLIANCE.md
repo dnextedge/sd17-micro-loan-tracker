@@ -16,7 +16,7 @@ This checklist is updated as functionality is verified. “Planned” does not m
 | Database     | Supabase PostgreSQL              | Schema/RLS verified in Supabase CI |
 | Source Code  | GitHub                           | `main` and `develop` published     |
 | README       | Repository README                | Included                           |
-| Demo Video   | 2–3 minute deployed workflow     | Script drafted; recording pending  |
+| Demo Video   | 2–3 minute deployed workflow     | Published on Google Drive          |
 
 ## Detailed MVP acceptance evidence
 
@@ -51,7 +51,7 @@ This checklist is updated as functionality is verified. “Planned” does not m
 | 27  | README explains setup and compliance     | Included and release-audited                          |
 | 28  | Demonstration data is available          | Local synthetic seed included                         |
 | 29  | Demo credentials documented safely       | Local pair included; production accounts kept private |
-| 30  | 2–3 minute demonstration flow documented | `docs/DEMO_SCRIPT.md` complete; recording pending     |
+| 30  | 2–3 minute demonstration flow documented | Script complete; published video linked               |
 
-The submission tag remains blocked by publication of the final video link. No
-incomplete item is represented as passing.
+All 30 MVP acceptance criteria have implementation or verification evidence.
+The published video is accessible to anyone with the link.
