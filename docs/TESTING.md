@@ -181,3 +181,35 @@ Hosted rollout passed:
   window.
 
 Authenticated production/private-browser QA remains a Phase 7 release gate.
+
+## Phase 7 release verification — 13 August 2026
+
+Passed:
+
+- Formatter, ESLint, strict TypeScript, 26 Vitest assertions, and the production
+  Next.js 16.3.0 build.
+- Database lint with no findings and all 85 pgTAP assertions.
+- `npm audit --omit=dev` reported zero production dependency vulnerabilities.
+- Tracked-file secret-pattern scan found no committed credentials.
+- Production landing, login, anonymous borrower/admin redirects, HTTPS, HSTS,
+  release-status copy, and Vercel runtime-error scan.
+- Production mobile QA at 390 × 844: no body overflow and visible primary touch
+  targets met the 40-pixel minimum used by this release check.
+- Public production screenshots were captured under `docs/screenshots`.
+- Independent production borrower and administrator profiles authenticated
+  successfully without exposing credentials to source code or test output.
+- Borrower QA verified the dashboard, approved application, disbursed loan, six
+  pending installments, empty repayment history, structured profile fields,
+  server-side administrator-route denial, and an error-free browser console.
+- Administrator QA verified portfolio summaries plus application, loan,
+  repayment, borrower, report, and settings pages. No production financial
+  mutation was performed during this release check.
+- Authenticated borrower mobile QA at 390 × 844 had no body overflow; controls
+  remained within the viewport and long navigation remained scrollable.
+- A fresh in-app browser session reached the protected production `/dashboard`
+  after sign-in. The user confirmed the authenticated dashboard was visible;
+  direct automated inspection was restricted by the browser security policy.
+
+Pending release gates:
+
+- Published 2–3 minute video URL.

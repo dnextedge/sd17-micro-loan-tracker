@@ -9,16 +9,15 @@
 ## Current production deployment
 
 - Public URL: `https://sd17-micro-loan-tracker.vercel.app`
-- Deployment ID: `dpl_4YtR21nTjtwdpmQhiFvYSRMexBXz`
+- Deployment ID: `dpl_J8Q5zSfVWNziE56oh97dveBjLX2c`
 - Status verified: `Ready`
 - Latest deployment date: 13 August 2026
-- Scope: Phase 5 authentication, profiles, application review, loan creation,
-  disbursement, schedules, repayments, and dashboards
+- Source commit: `617ea51`
+- Scope: Complete Phase 6 MVP plus Phase 7 submission-status polish
 
-The public login route returned HTTP 200 with HTTPS and HSTS enabled, and an
-anonymous protected-route request returned the expected sign-in redirect. The
-deployment was built as a preview, verified, and promoted unchanged through the
-Vercel CLI.
+The public login route returned HTTP 200 with HTTPS and HSTS enabled. Anonymous
+borrower and administrator protected-route requests returned the expected
+sign-in redirect, and Vercel reported no runtime errors after deployment.
 
 ## Vercel configuration
 
@@ -49,7 +48,7 @@ Production deployment. Production continues to use `NEXT_PUBLIC_APP_URL`.
 - Vercel previews use the team-scoped
   `https://*-dnextedge-8904s-projects.vercel.app/**` pattern.
 - The CLI project is linked and all migrations through
-  `20260813120000_repayment_recording_and_allocation.sql` are applied.
+  `20260813143000_loan_completion.sql` are applied.
 - Demo seed data must never be pushed into a real production dataset accidentally.
 
 ## Release verification
@@ -61,6 +60,6 @@ Production deployment. Production continues to use `NEXT_PUBLIC_APP_URL`.
 5. Record the production URL and evidence.
 6. Tag the verified commit `v1.0.0-3mtt-submission`.
 
-The Phase 5 application and hosted schema are deployed. Authenticated
-production/incognito workflow QA, final documentation/screenshots, and the
-submission tag remain release gates.
+The complete application and hosted schema are deployed. Automated release
+gates and public, authenticated, private-browser, and mobile QA pass. The final
+video link and submission tag remain release gates.

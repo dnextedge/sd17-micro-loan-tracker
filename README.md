@@ -4,12 +4,9 @@ Digital Micro-Loan Request & Repayment Tracking.
 
 LoanTrack NG is a 3MTT capstone project that will replace paper forms, notebooks, and disconnected spreadsheets with a focused workflow for requesting, reviewing, disbursing, and tracking micro-loans. It is a tracking and management system, not a licensed lender.
 
-> Development status: Authentication, borrower profiles, application
-> submission/review, and production role authorization are complete. Loan
-> creation, disbursement, schedule generation, repayment recording, allocation,
-> and portfolio dashboards are implemented, verified, and deployed. Public
-> production checks pass; authenticated private-browser QA remains a release
-> gate before the submission tag.
+> Development status: The complete submission MVP is implemented, tested, and
+> deployed. Phase 7 application and private-browser verification pass. The final
+> demo-video link remains the only release gate before the submission tag.
 
 ## 3MTT Project Information
 
@@ -30,7 +27,7 @@ LoanTrack NG will provide two simple role-based experiences:
 
 ## Key Features
 
-The submission MVP includes or is implementing:
+The submission MVP includes:
 
 - Supabase authentication and password recovery
 - Borrower profiles and loan applications
@@ -76,7 +73,29 @@ See [docs/SECURITY.md](docs/SECURITY.md).
 
 ## Screenshots
 
-Submission screenshots will be added after the end-to-end MVP is complete and production QA passes.
+### Production landing page
+
+![LoanTrack NG production landing page](docs/screenshots/01-landing-page.png)
+
+### Secure sign-in
+
+![LoanTrack NG secure sign-in](docs/screenshots/02-secure-login.png)
+
+### Mobile layout
+
+![LoanTrack NG mobile landing page](docs/screenshots/03-mobile-landing.png)
+
+### Borrower dashboard
+
+![LoanTrack NG borrower dashboard](docs/screenshots/04-borrower-dashboard.png)
+
+### Loan and repayment schedule
+
+![LoanTrack NG loan and repayment schedule](docs/screenshots/05-borrower-loan.png)
+
+### Mobile borrower workspace
+
+![LoanTrack NG mobile borrower workspace](docs/screenshots/06-borrower-mobile.png)
 
 ## Installation
 
@@ -150,8 +169,9 @@ The local-only synthetic seed creates these accounts:
 | Admin    | `admin@example.test`         | `LoanTrackAdmin!2026` |
 
 These `.test` accounts contain no real personal or financial information. The
-seed is not applied by `supabase db push`; production demonstration credentials
-must be created separately and rotated before public submission.
+seed is not applied by `supabase db push`. Production borrower and administrator
+accounts are verified, but their credentials are intentionally not committed.
+Share them privately with an assessor and rotate them after the review.
 
 ## SD-17 Compliance
 
