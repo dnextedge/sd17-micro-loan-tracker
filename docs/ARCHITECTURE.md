@@ -27,10 +27,29 @@ LoanTrack NG records
 
 - Server Components perform authenticated reads without an internal HTTP round trip.
 - Server Actions handle internal form mutations.
+- Loan creation and disbursement Server Actions remain thin: they re-authorize
+  the administrator and delegate the financial transaction to restricted
+  PostgreSQL RPCs.
+- Repayment recording follows the same boundary: the Server Action validates
+  form shape and converts naira input to integer kobo, while the restricted
+  PostgreSQL RPC performs authorization, locking, allocation, aggregates,
+  status changes, transaction history, and auditing atomically.
+- Final loan completion follows the same thin-action pattern and delegates its
+  financial and schedule invariants to the restricted PostgreSQL transaction.
 - Route Handlers are reserved for auth callbacks and genuine HTTP integrations.
 - Node.js is the default runtime.
 - Production builds use Next.js's supported webpack builder because Turbopack's CSS worker cannot bind its internal port in the managed Codex environment. Development can continue to use the default Next.js dev bundler.
-- `proxy.ts` will refresh authentication cookies and provide early route redirects; it will not replace database authorization.
+- `src/proxy.ts` refreshes Supabase authentication cookies and redirects
+  unauthenticated protected-route requests. Server layouts verify the user
+  again, administrator pages query the protected `user_roles` table, and RLS
+  remains the final authorization boundary.
+
+Administrator and borrower navigation are role-specific. Administrator routes
+cover applications, loans, repayments, borrower records, operational reports,
+and documented MVP settings. Borrower reads use `/applications`, `/loans`, and
+`/repayments`, with PostgreSQL RLS applying ownership at both list and detail
+levels. Administrative list searches operate only on records already returned
+through authorized database queries.
 
 ## Trust boundaries
 
